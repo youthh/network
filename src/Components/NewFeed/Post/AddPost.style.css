@@ -1,0 +1,35 @@
+.box_post-add{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 605px;
+    width: 100%;
+
+    margin: 19px auto 19px auto;
+    padding: 13px;
+
+}
+
+.box_post-add div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.box_post-add input{
+    margin-left: 5px;
+    border: 0;
+    outline: none;
+}
+
+.box_post-add input::placeholder{
+    color: #cad1d9;
+    font-weight: 500;
+}
+
+.btn_addPost{
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+}

@@ -1,0 +1,80 @@
+.top_request{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+
+.top_request p{
+    text-align: left;
+    font-size: 14px;
+}
+
+.btn_request{
+    color: #fff;
+    padding: 13px 35px;
+    border-radius: 13px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.span_name{
+    color: #365070;
+    font-weight: 600;
+}
+
+
+.btn_decline{
+    border: 1px solid #e2e2ec;
+    background-color: transparent;
+    color: #647791;
+}
+
+.bottom_request{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.request_item{
+    padding: 20px;
+    margin-bottom: 11px;
+
+}
+
+.request_item:last-child{
+    margin-bottom: 0;
+}
+
+.request_title_notif{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    margin-bottom: 10px;
+}
+
+.request_title_notif h5{
+    text-transform: uppercase;
+    color: #bec6d2;
+}
+
+.request_title_notif div{
+    background-color: #1877f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 100%;
+}
+
+
+.numberOf_friend{
+    font-size: 13px;
+    color: #fff;
+    display: block;
+    line-height: 6px;
+    font-weight: 500;
+}

@@ -3,11 +3,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Amplify  from "aws-amplify";
+import awsconfig from "./aws-exports";
+import {Provider} from "react-redux";
+import {BrowserRouter} from "react-router-dom";
+import store from "./store";
+Amplify.configure(awsconfig);
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <BrowserRouter>
+        <Provider store={store}>
+            <App />
+        </Provider>
+    </BrowserRouter>,
   document.getElementById('root')
 );
 
