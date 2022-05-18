@@ -30,10 +30,15 @@ p{
 .inner_content{
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   margin-top: 22px;
 }
 
 .left_sideBar{
   max-width: 250px;
   width: 100%;
+}
+
+.css-13xfq8m-MuiTabPanel-root {
+  padding: 24px 0;
 }

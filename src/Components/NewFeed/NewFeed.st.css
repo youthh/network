@@ -1,4 +1,8 @@
 .newFeedContainer{
-    max-width: 650px;
+    max-width: 565px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }

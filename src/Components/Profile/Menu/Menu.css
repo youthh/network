@@ -5,6 +5,8 @@
 
 .name_page{
     margin-left: 16px;
+    color: #49607e;
+    transition: .3s;
 }
 
 .box_menu{
@@ -19,6 +21,7 @@
     font-size: 16px;
     border-bottom: 1px solid #f0f2f6;
     border-left: 2px solid transparent;
+    transition: .3s;
 }
 
 .link_item-link:last-child{
@@ -31,14 +34,17 @@
     background-color: #fbfbfc;
 }
 
+.active .name_page{
+    color: #388af3;
 
+}
 
 .item__menu-list{
     display: flex;
     padding: 10px 10px 10px 30px;
     align-items: center;
     border-bottom: 1px solid #f3f3f8;
-    transition: .3s;
+
     cursor: pointer;
 }
 

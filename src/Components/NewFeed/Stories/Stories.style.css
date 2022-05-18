@@ -1,10 +1,15 @@
 .block__stories{
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     max-width: 610px;
+    min-height: 178px;
     width: 100%;
+    transition: .4s;
+}
 
+.css-18lrjg1-MuiCircularProgress-root{
+   text-align: center;
 }
 
 .over{
@@ -18,15 +23,15 @@
 
 
     overflow: hidden;
-    background: rgba(75, 75, 75, 0.15);
+    background: rgba(75, 75, 75, 0.50);
 
     background-size: cover;
 
-    transition: ease-in-out .2s;
+    transition: .3s;
 }
 
 .story__item:hover .over{
-    background: rgba(75, 75, 75, 0.30);
+    background: rgba(75, 75, 75, 0.65);
 }
 
 .user_story-name{
@@ -46,7 +51,7 @@
 
 
 .person_img_stor div{
-    border: 3px solid #fff;
+    border: 3px solid #1877f2;
     padding: 3px 3px 3px 3px;
     border-radius: 14px;
 }
@@ -86,9 +91,12 @@
     border-radius: 10px;
     background-color: rgba(0,0,0, 1);
     cursor: pointer;
-    transition: .3s
-;
+    transition: .3s;
 
+}
+
+.story__item:last-child{
+    margin-right: 0;
 }
 
 .block_add{

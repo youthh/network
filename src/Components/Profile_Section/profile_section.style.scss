@@ -1,0 +1,47 @@
+.profile_top{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 60px;
+}
+
+
+.img_profile_box{
+  width: 150px;
+  height: 150px;
+}
+
+.profile_text{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.profile_folling_box{
+  display: flex;
+  justify-content: space-between;
+  width: 210px;
+  margin: 10px 0;
+}
+.img_profile_box{
+
+  img{
+    margin-right: 0;
+  }
+}
+
+.profile_bottom{
+  width: 560px;
+  border-top: 1px solid #2f5386;
+}
+
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root{
+  font-size: 12px !important;
+
+
+}
+
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected {
+  color: #1877f2 !important;
+}

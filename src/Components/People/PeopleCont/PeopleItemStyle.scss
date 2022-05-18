@@ -1,0 +1,121 @@
+
+.top_people_item{
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+  align-items: center;
+}
+
+.img_people_item{
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  display: block;
+
+
+}
+
+.box_people-item{
+  padding: 18px;
+  max-width: 367px;
+  margin-bottom: 22px;
+  border-radius: 13px;
+}
+
+.item_img_block{
+  text-align: center;
+}
+
+.People_container{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+
+
+.people_follow_block{
+  display: flex;
+  justify-content: space-between;
+  margin: 7px 0;
+  width: 100%;
+}
+
+.content_item_people{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+
+}
+
+.bl{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.content_item_people p{
+  font-weight: 600;
+}
+
+.bottom_item_people{
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 0 30px;
+}
+
+.btn_people-follow{
+  padding: 9px 10px;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 12px;
+  width: 103px;
+}
+
+.people_name{
+  font-weight: 700;
+  font-size: 17px;
+  text-decoration: none;
+  color: #1d3a5f;
+  transition: .3s;
+}
+
+.people_name:hover{
+  text-decoration: underline;
+  color: #173254;
+}
+
+.city_name-item{
+  margin-left: 3px;
+
+}
+
+
+.img_oval{
+  width: 110px;
+  height: 110px;
+  border: 2px solid #1d3a5f;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 14px 6px 0;
+  padding: 3px;
+}
+
+
+.tag_name_people{
+  font-size: 16px;
+  font-weight: 700;
+  padding-right: 10px;
+  color: #1d3a5f;
+}
+
+.people_block_location{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
