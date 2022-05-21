@@ -20,8 +20,8 @@ const storage = getStorage(app);
 
 
 
-const spaceRef = ref(storage, 'postPhoto/post.jpg');
-console.log(spaceRef)
-getDownloadURL(spaceRef).then(r => {
-    console.log(r)
+const spaceRef = ref(storage, 'IMG_4926 (1).svg');
+
+ getDownloadURL(spaceRef).then((url) => {
 })
+

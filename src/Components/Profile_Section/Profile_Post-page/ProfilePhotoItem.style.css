@@ -1,0 +1,66 @@
+.img_post_profile {
+  display: block;
+  width: 225px;
+  height: 225px;
+  user-select: none;
+  position: absolute;
+  left: 0;
+  object-fit: cover;
+  top: 0;
+}
+
+.profile_post_item {
+  position: relative;
+}
+.profile_post_item a {
+  text-decoration: none;
+}
+
+.count {
+  color: #fff;
+}
+
+.box_post_profile {
+  position: relative;
+  width: 225px;
+  height: 225px;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  transition: 0.5s ease;
+  width: 225px;
+  height: 225px;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(56, 56, 56, 0);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.overlay:hover {
+  background-color: rgba(121, 175, 248, 0.5);
+}
+.overlay:hover div {
+  opacity: 1;
+}
+.overlay div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transition: 0.5s ease;
+  margin-right: 10px;
+  font-size: 18px;
+}
+.overlay div p {
+  margin-right: 2px;
+}
+.overlay div:last-child {
+  margin-right: 0;
+}
+
+/*# sourceMappingURL=ProfilePhotoItem.style.css.map */

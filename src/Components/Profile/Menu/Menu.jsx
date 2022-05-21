@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import './Menu.css'
 import '../Profile.style.css'
 import {BsHouseDoor, BsPerson, BsPersonSquare} from "react-icons/bs";
-import {MdOutlinePhotoSizeSelectActual, MdOutlineSettings} from "react-icons/md";
 import {BiNews} from "react-icons/bi";
 import {NavLink} from "react-router-dom";
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
@@ -12,8 +11,13 @@ import {getNameSp} from "../../../Slices/userSlice";
 const Menu = () => {
     let [active, setActive] = useState(true)
     let name = useSelector(getNameSp)
-
-
+    let url = ''
+    if (name) {
+        url = '/' + name;
+    }
+    else {
+        url = 'test'
+    }
 
     const setAc = () => {
         setActive((val) => !val)
@@ -42,7 +46,7 @@ const Menu = () => {
                                 <p className="name_page">New Feed</p>
                             </li>
                         </NavLink>
-                        <NavLink to={"/" + name} className="link_item-link">
+                        <NavLink to={url} className="link_item-link">
                             <li className="item__menu-list">
                                 <BsPerson size={24} />
                                 <p className="name_page">Profile</p>

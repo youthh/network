@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSelector, createSlice} from "@reduxjs/toolkit";
-import {collection, getDocs} from "firebase/firestore";
+import {collection, getDocs, query, where} from "firebase/firestore";
 import {db} from "../Firebase/firebase";
 
 
@@ -7,9 +7,29 @@ export const ThunkGetPeople = createAsyncThunk(
     'user/ThunkGetPeople',
     async () => {
         const user = collection(db, "users")
-        let users =  await getDocs(user)
+        return   (await getDocs(user)).docs
 
-        return users.docs
+
+    }
+)
+
+export const getUserProfilePage = createAsyncThunk(
+    'user/getUserProfilePage',
+    async (name) => {
+
+        const user = query(collection(db, "users"), where("name", "==", name.split('-').join(' ')));
+        return  (await getDocs(user)).docs
+
+    }
+)
+
+export const getCurrentUser = createAsyncThunk(
+    'user/getCurrentUser',
+    async (name) => {
+
+        const user = query(collection(db, "users"), where("name", "==", name));
+        return  (await getDocs(user)).docs
+
     }
 )
 
@@ -44,6 +64,16 @@ const userSlice = createSlice({
             city: null,
             name: null,
             img: null,
+        },
+        profileVisit:{
+            id: null,
+            followers: null,
+            following: null,
+            followed: null,
+            city: null,
+            name: null,
+            img: null,
+            post: []
         }
 
     },
@@ -59,7 +89,7 @@ const userSlice = createSlice({
             state.auth = !state.auth
         },
         setUser: (state, action) => {
-            debugger
+
             state.user.name = action.payload.displayName
             state.user.img = action.payload.photoURL
             state.user.id = action.payload.uid
@@ -70,13 +100,22 @@ const userSlice = createSlice({
         setFollow: (state, action) => {
 
             state.userPeople.map((p) => {
+
                 if (p.id === action.payload) {
-                    p.followed = !p.followed
+
+                    p.data.followed = !p.data.followed
                 }
             })
         },
         setUsersNull: (state) => {
             state.userPeople = [];
+        },
+        setProfilePageNull: (state) => {
+            state.profileVisit.following = null
+            state.profileVisit.followers = null
+            state.profileVisit.name = null
+            state.profileVisit.img = null
+            state.profileVisit.city = null
         }
     },
 
@@ -86,23 +125,51 @@ const userSlice = createSlice({
         },
         [ThunkGetPeople.fulfilled]: (state, action) => {
             state.isFetching = false
+
             state.userPeople = action.payload.map((d) => {
-                return d.data()
+                return {data: d.data(), id: d.id};
 
             })
+        },
+        [getCurrentUser.fulfilled]: (state, action) => {
+
+            action.payload.forEach((doc) => {
+                console.log(doc.data())
+                state.user.following = doc.data().following
+                state.user.followers = doc.data().followers
+                state.user.city = doc.data().location
+            })
+        },
+        [getUserProfilePage.pending]: (state) => {
+            state.isFetching = true;
+        },
+        [getUserProfilePage.fulfilled]: (state, action) => {
+            state.isFetching = false
+            action.payload.forEach((doc) => {
+                state.profileVisit.following = doc.data().following
+                state.profileVisit.followers = doc.data().followers
+                state.profileVisit.name = doc.data().name
+                state.profileVisit.img = doc.data().img
+                state.profileVisit.city = doc.data().location
+                state.profileVisit.post = doc.data().post
+            })
+
         }
     }
 
 })
 
 
-export const {setMenuProfile, setMenuAuth, setAuth, setUsersNull, setFollow, setUser} = userSlice.actions
+export const {setMenuProfile, setMenuAuth, setAuth, setUsersNull, setFollow, setUser, setProfilePageNull} = userSlice.actions
 
 
 export const getNameSp = (state) => {
     return state.userSlice.user.name ? state.userSlice.user.name.split(' ').join('-') : null
 }
 
+export const isFetch = (state) => {
+    return state.userSlice.isFetching
+}
 
 
 

@@ -2,7 +2,6 @@ import React from "react";
 import './Header.style.css'
 import {BiSearch} from "react-icons/bi";
 import {CgAddR} from "react-icons/cg";
-import h from '../../images/IMG_4926 (1).svg'
 import {useDispatch, useSelector} from "react-redux";
 import CustomizedSwitches from "../Switcher/Switch";
 import {IoExitOutline} from "react-icons/io5";
@@ -22,7 +21,7 @@ const Header = () => {
             <div className="container">
                 <div className="header_inner">
                     <div className="left_side">
-                        <img src={h} className="he" alt="logo"/>
+                        <img src="https://firebasestorage.googleapis.com/v0/b/stogram-cd5a6.appspot.com/o/IMG_4926%20(1).svg?alt=media&token=aa84f0ec-477e-4168-a5fa-ec7107710dfd" className="he" alt="logo"/>
                         <h1 className="title_name">StoGram</h1>
                     </div>
                     <div className="right_headr">

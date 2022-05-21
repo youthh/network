@@ -4,8 +4,8 @@ import {IoLocationSharp} from "react-icons/io5";
 import {NavLink} from "react-router-dom";
 
 
-const PeopleItemCard = (props) => {
 
+const PeopleItemCard = (props) => {
 
 
     return(
@@ -18,7 +18,7 @@ const PeopleItemCard = (props) => {
                     </div>
                 </div>
                 <div className="content_item_people">
-                    <NavLink to={"/" + props.nameUser} className="people_name">{props.nameUser}</NavLink>
+                    <NavLink to={"/" + props.nameUser.split(' ').join('-')} className="people_name">{props.nameUser}</NavLink>
                     <div className="people_follow_block">
                         <p>{props.follower + " followers"}</p>
                         <p>{props.followingg + " following"} </p>

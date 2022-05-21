@@ -25,9 +25,9 @@ const PostContainer = (props) => {
 
         dispatch(ThunkGetPost())
 
-        return () => {
-            dispatch(setPostNull())
-        }
+        // return () => {
+        //     dispatch(setPostNull())
+        // }
 
     }, [])
 

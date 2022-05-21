@@ -1,6 +1,12 @@
 User:
-.....1.add theme to user
+    - do right auth
+    - setup follow func
 
 
 Post:
-.....1.add to post name user like
+    - setup right pots & fix some post
+
+
+
+Auth:
+    - make norm auth page

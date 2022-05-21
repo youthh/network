@@ -18,14 +18,14 @@ const PeopleTabs = () => {
     return(
         <div>
             <TabContext value={value}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <TabList onChange={handleChange} aria-label="lab API tabs example">
-                        <Tab label="All people" value="1" />
-                        <Tab label="Followers" value="2" />
-                        <Tab label="Following" value="3" />
+                <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+                    <TabList onChange={handleChange} aria-label="lab API tabs example" centered>
+                        <Tab label="All people" value="1"/>
+                        <Tab label="Followers" value="2"/>
+                        <Tab label="Following" value="3"/>
                     </TabList>
                 </Box>
-                <TabPanel value="1">   <PeopleContainer/></TabPanel>
+                <TabPanel value="1"> <PeopleContainer/></TabPanel>
                 <TabPanel value="2">{followers ? null : <p>No followers yet</p>}</TabPanel>
                 <TabPanel value="3">{following ? null : <p>No following yet</p>} </TabPanel>
             </TabContext>

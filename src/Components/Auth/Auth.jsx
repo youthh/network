@@ -2,7 +2,7 @@ import React from 'react'
 import { GoogleAuthProvider, getAuth, signInWithPopup} from "firebase/auth";
 import app from "../../App";
 import {useDispatch} from "react-redux";
-import {setMenuAuth, setUser} from "../../Slices/userSlice";
+import {getCurrentUser, setMenuAuth, setUser} from "../../Slices/userSlice";
 
 
 const AuthCom = () => {
@@ -12,12 +12,10 @@ const AuthCom = () => {
 
     signInWithPopup(auth, provider)
         .then((result) => {
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            console.log(credential)
-            const token = credential.accessToken;
             const user = result.user;
             dispatch(setUser(user))
             dispatch(setMenuAuth())
+            dispatch(getCurrentUser(user.displayName))
 
             // ...
         }).catch((error) => {

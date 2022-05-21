@@ -31,21 +31,23 @@ const PeopleContainer = () => {
             <div className="People_container">
 
                 {
-                    isFetching ?  <CircularProgress   /> :
-                    people.map((p, key) => {
-                        return <PeopleItemCard
-                            followed={p.followed}
-                            follow={follow}
-                            id={p.id}
-                            key={key}
-                            nameUser={p.name}
-                            follower={p.followers}
-                            followingg={p.following}
-                            tag={p.tagName}
-                            imgP={p.imgProfile}
-                            location={p.location}
-                        />
-                    })
+                        isFetching ?  <CircularProgress   /> :
+                        people.map((p, key) => {
+
+                            return <PeopleItemCard
+
+                                followed={p.data.followed}
+                                follow={follow}
+                                id={p.id}
+                                key={key}
+                                nameUser={p.data.name}
+                                follower={p.data.followers}
+                                followingg={p.data.following}
+                                tag={p.data.tagName}
+                                imgP={p.data.img}
+                                location={p.data.location}
+                            />
+                        })
                 }
 
 
