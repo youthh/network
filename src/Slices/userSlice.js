@@ -1,6 +1,12 @@
 import {createAsyncThunk, createSelector, createSlice} from "@reduxjs/toolkit";
-import {collection, getDocs, query, where} from "firebase/firestore";
+import {collection, getDocs, query, where, addDoc,
+    orderBy, updateDoc, doc, arrayUnion, arrayRemove} from "firebase/firestore";
 import {db} from "../Firebase/firebase";
+
+
+
+
+
 
 
 export const ThunkGetPeople = createAsyncThunk(
@@ -12,6 +18,19 @@ export const ThunkGetPeople = createAsyncThunk(
 
     }
 )
+
+export const getUserProfilePost = createAsyncThunk(
+    'user/getUserProfilePost',
+    async (name) => {
+        let refPost = collection(db, 'post')
+
+        const postUser = query(refPost, orderBy('date', "desc"), where('name', '==', name))
+
+        const  s = (await getDocs(postUser)).docs
+        return  s
+    }
+)
+
 
 export const getUserProfilePage = createAsyncThunk(
     'user/getUserProfilePage',
@@ -33,42 +52,141 @@ export const getCurrentUser = createAsyncThunk(
     }
 )
 
-export const setAuthUser = createAsyncThunk(
-    'user/setAuthUser',
-    async () => {
+export const getFollowing = createAsyncThunk(
+    'user/getFollowing',
+    async (data) => {
 
+        let arr = []
+        const users = collection(db, "users");
+        for (let i = 0; i < data.length; i++) {
+            const q = query(users, where("name", "==", data[i]));
+            arr[i] = (await getDocs(q)).docs
+        }
+
+
+        return  arr
+    }
+)
+
+export const thunkGetUserFollowersName = createAsyncThunk(
+    'user/thunkGetUserFollowersName',
+    async (data) => {
+
+        let arr = []
+        const users = collection(db, "users");
+        for (let i = 0; i < data.length; i++) {
+            const q = query(users, where("name", "==", data[i]));
+            arr[i] = (await getDocs(q)).docs
+        }
+
+
+        return  arr
+    }
+)
+
+export const thunkSetFollower = createAsyncThunk(
+    'user/thunkSetFollower',
+    async (data) => {
+
+        if (data.followed) {
+            const user = doc(db, 'users', data.id);
+            await updateDoc(user, {
+                followed: false
+            })
+            const washingtonRef = doc(db, "users", data.id);
+
+            await updateDoc(washingtonRef, {
+                followers: arrayRemove(data.userN)
+            });
+
+        }
+        else {
+            const user = doc(db, 'users', data.id);
+            await updateDoc(user, {
+                followed: true
+            })
+
+            const washingtonRef = doc(db, "users", data.id);
+            await updateDoc(washingtonRef, {
+                followers: arrayUnion(data.userN)
+            });
+        }
     }
 )
 
 export const thunkSetFollow = createAsyncThunk(
     'user/setFollow',
-    async (id) => {
+    async (data) => {
+
+
+        if (data.followed) {
+            const user = doc(db, 'users', data.id);
+            await updateDoc(user, {
+                followed: false
+            })
+            const washingtonRef = doc(db, "users", data.userId);
+
+            await updateDoc(washingtonRef, {
+                following: arrayRemove(data.nameUser)
+            });
+
+        }
+        else {
+            const user = doc(db, 'users', data.id);
+            await updateDoc(user, {
+                followed: true
+            })
+
+            const washingtonRef = doc(db, "users", data.userId);
+            await updateDoc(washingtonRef, {
+                following: arrayUnion(data.nameUser)
+            });
+        }
+
+
 
     }
 )
+
+export const getAccountUser = createAsyncThunk(
+    'user/getAccountUser',
+
+    async (name) => {
+
+        let userData = collection(db, 'users');
+        const user = query(userData, where("name", "==", name));
+
+        return (await getDocs(user)).docs
+
+    }
+)
+
+
 
 const userSlice = createSlice({
     name: 'user',
 
     initialState: {
         isFetching: false,
+        isFollow: true,
         userPeople: [],
         auth: false,
         isMenuAuth: false,
         isMenu: false,
         user: {
             id: null,
-            followers: null,
-            following: null,
+            followers: [],
+            following: [],
             followed: null,
             city: null,
             name: null,
             img: null,
+            followingU: []
         },
         profileVisit:{
             id: null,
-            followers: null,
-            following: null,
+            followers: [],
+            following: [],
             followed: null,
             city: null,
             name: null,
@@ -90,10 +208,10 @@ const userSlice = createSlice({
         },
         setUser: (state, action) => {
 
-            state.user.name = action.payload.displayName
+            state.user.name = action.payload.email.split('@gmail.com').join('')
             state.user.img = action.payload.photoURL
             state.user.id = action.payload.uid
-            state.user.id = action.payload.uid
+
             state.auth = !state.auth
 
         },
@@ -101,14 +219,26 @@ const userSlice = createSlice({
 
             state.userPeople.map((p) => {
 
-                if (p.id === action.payload) {
+                if (p.id === action.payload.id) {
 
                     p.data.followed = !p.data.followed
+                    !p.data.followed ? p.data.followers.forEach((i, index) => {
+                        if (i === action.payload.userN) {
+                            p.data.followers.splice(index, 1)
+                        }
+                    }) :  p.data.followers.push(action.payload.userN)
+
                 }
             })
         },
         setUsersNull: (state) => {
             state.userPeople = [];
+
+        },
+        setFollowerNull: (state) => {
+            state.user.following = [];
+            state.user.followingU = [];
+
         },
         setProfilePageNull: (state) => {
             state.profileVisit.following = null
@@ -116,6 +246,9 @@ const userSlice = createSlice({
             state.profileVisit.name = null
             state.profileVisit.img = null
             state.profileVisit.city = null
+        },
+        setPostProfileNull: (state) => {
+            state.profileVisit.post = [];
         }
     },
 
@@ -145,32 +278,80 @@ const userSlice = createSlice({
         },
         [getUserProfilePage.fulfilled]: (state, action) => {
             state.isFetching = false
+            state.profileVisit.id = action.payload[0].id
             action.payload.forEach((doc) => {
                 state.profileVisit.following = doc.data().following
                 state.profileVisit.followers = doc.data().followers
                 state.profileVisit.name = doc.data().name
                 state.profileVisit.img = doc.data().img
                 state.profileVisit.city = doc.data().location
-                state.profileVisit.post = doc.data().post
+                state.profileVisit.followed = doc.data().followed
             })
 
+        },
+        [getUserProfilePost.fulfilled]: (state, action) => {
+
+
+            state.profileVisit.post = action.payload.map((d) => {
+                return d.data()
+            });
+        },
+        [thunkSetFollow.pending]: (state) => {
+            state.isFollow = true
+        },
+        [thunkSetFollow.fulfilled]: (state) => {
+            state.isFollow = false
+        },
+        [getAccountUser.fulfilled]: (state, action) => {
+
+            state.user.following = action.payload[0].data().following
+        },
+        [getFollowing.fulfilled]: (state, action) => {
+            state.user.followingU = action.payload.map((i) => {
+                return i.map((i) => {
+                    return {data: i.data(), id: i.id}
+                })
+            })
+
+        },
+        [thunkGetUserFollowersName.fulfilled]: (state,action) => {
+            state.user.followers = action.payload.map((i) => {
+                return i.map((i) => {
+                    return {data: i.data(), id: i.id}
+                })
+            })
         }
     }
 
 })
 
 
-export const {setMenuProfile, setMenuAuth, setAuth, setUsersNull, setFollow, setUser, setProfilePageNull} = userSlice.actions
+export const {setMenuProfile,
+    setMenuAuth,
+    setPostProfileNull,
+    setUsersNull,
+    setFollow,
+    setUser,
+    setFollowerNull,
+    setProfilePageNull
+} = userSlice.actions
 
 
 export const getNameSp = (state) => {
-    return state.userSlice.user.name ? state.userSlice.user.name.split(' ').join('-') : null
+
+    return state.userSlice.user.name ? state.userSlice.user.name.split(' ').join('') : null
 }
 
 export const isFetch = (state) => {
     return state.userSlice.isFetching
 }
 
+export const getUser = (state) => {
+    return state.userSlice.user
+}
 
+export const getFetch = state => {
+    return state.userSlice.isFollow
+}
 
 export default userSlice.reducer

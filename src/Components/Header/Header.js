@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import './Header.style.css'
 import {BiSearch} from "react-icons/bi";
 import {CgAddR} from "react-icons/cg";
@@ -15,6 +15,24 @@ const Header = () => {
     let auth = useSelector(state => state.userSlice.auth)
     let isMenuAc = useSelector(state => state.userSlice.isMenu)
     let img = useSelector(state => state.userSlice.user.img)
+    let reference = useRef();
+    let refInput = useRef();
+
+
+    useEffect(() => {
+        const checkClickOut = (e) => {
+            if (isMenuAc && reference.current  && !reference.current.contains(e.target)) {
+                dispatch(setMenuProfile())
+
+            }
+        }
+        document.addEventListener("mousedown", checkClickOut)
+
+        return () => {
+            document.removeEventListener("mousedown", checkClickOut)
+        }
+
+    }, [isMenuAc])
 
     return (
         <header className="header">
@@ -39,13 +57,16 @@ const Header = () => {
                             </button>
                         </div>
                         {
-                            auth ?
-                                <div className="main_box_profile">
+
+                        auth ?
+                                <div className="main_box_profile" ref={reference}>
                                     <div className="avatar_box" onClick={() => dispatch(setMenuProfile())}>
                                         {
-                                            img ? <img className="user_avatar-header img"
-                                                       src={img}
-                                                       alt="avatar"/>
+                                            img ? <div className="profile_box-img header">
+                                                    <img className="user_avatar-header img"
+                                                         src={img}
+                                                         alt="avatar"/>
+                                            </div>
                                                 : <BsPersonCircle size={35} color={"#1d3a5f"}/>
                                         }
                                     </div>

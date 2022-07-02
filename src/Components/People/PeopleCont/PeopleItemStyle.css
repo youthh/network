@@ -10,6 +10,7 @@
   height: 100%;
   border-radius: 100%;
   display: block;
+  user-select: none;
 }
 
 .box_people-item {
@@ -47,7 +48,13 @@
 .bl {
   position: absolute;
   right: 0;
-  bottom: 0;
+  bottom: 0px;
+}
+
+.location_div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .content_item_people p {
@@ -64,9 +71,8 @@
   padding: 9px 10px;
   color: #fff;
   font-weight: 600;
-  border-radius: 12px;
-  width: 103px;
-  transition: .3s;
+  border-radius: 12px !important;
+  width: 94px;
 }
 
 .people_name {

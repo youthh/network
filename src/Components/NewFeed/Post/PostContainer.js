@@ -8,8 +8,11 @@ import {CircularProgress} from "@mui/material";
 
 const PostContainer = (props) => {
     const dispatch = useDispatch();
-    let posts = useSelector((state => state.PostSlice.newPost))
+    let posts = useSelector(state => state.PostSlice.newPost)
     let isFetching = useSelector((state => state.PostSlice.isFetching))
+
+
+
 
 
     const setLikeThunk = (data, liked) => {
@@ -22,9 +25,7 @@ const PostContainer = (props) => {
     }
 
     useEffect(() => {
-
         dispatch(ThunkGetPost())
-
         // return () => {
         //     dispatch(setPostNull())
         // }
@@ -38,10 +39,12 @@ const PostContainer = (props) => {
                isFetching ?  <CircularProgress   /> :
                    posts.map((p, index) => {
 
-                       return <PostItem key={index}
+                       return <PostItem post={posts}
+                                        isFollow={props.isFollow}
+                                        key={index}
                                         userName={p.name}
                                         text={p.text}
-                                        data={new Date(p.date.seconds).toLocaleString("pt-BR")}
+                                        data={new Date(p.date.seconds * 1000).toLocaleString('PT')}
                                         likeCount={p.countOfLikes}
                                         comment={p.countOfCom}
                                         img={p.img}

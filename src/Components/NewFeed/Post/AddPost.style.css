@@ -1,3 +1,7 @@
+.add_post_container{
+    width: 100%;
+}
+
 .box_post-add{
     display: flex;
     justify-content: space-between;
@@ -16,10 +20,13 @@
     align-items: center;
 }
 
+
+
 .box_post-add input{
     margin-left: 5px;
     border: 0;
     outline: none;
+    width: 300px;
 }
 
 .box_post-add input::placeholder{
@@ -28,8 +35,39 @@
 }
 
 .btn_addPost{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 90px;
+    width: 100%;
     color: #fff;
-    padding: 10px;
+
     border-radius: 10px;
     font-weight: 600;
+
+    transition: .3s;
+}
+
+.css-sghohy-MuiButtonBase-root-MuiButton-root{
+    padding: 8px 0 8px 0 !important;
+    margin-right: 0 !important;
+}
+
+.btn_post{
+    border-radius: 10px !important;
+    max-width: 100px !important;
+
+    width: 100%;
+    text-transform: capitalize !important;
+    padding: 4px 8px !important;
+    background: #1877f2;
+    font-weight: 600;
+    margin-right: 0!important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn_post.right{
+    margin-left: 10px;
 }

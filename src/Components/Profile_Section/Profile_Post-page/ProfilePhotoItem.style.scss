@@ -1,3 +1,4 @@
+
 .img_post_profile{
   display: block;
   width: 225px;
@@ -13,8 +14,14 @@
 
 .profile_post_item{
   position: relative;
+  margin: 0 7px 10px 0;
+
   a{
     text-decoration: none;
+  }
+
+  &:nth-child(3n){
+    margin-right: 0;
   }
 
 }

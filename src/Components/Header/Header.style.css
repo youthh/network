@@ -114,6 +114,8 @@
     height: 40px;
     border-radius: 10px;
     margin-right: 0;
+    display: block;
+    
 }
 
 .user_avatar-header.img{
@@ -171,6 +173,11 @@
     margin: 0;
 }
 
+
+.profile_box-img.header{
+    margin-right: 0;
+
+}
 
 
 

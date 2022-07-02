@@ -20,10 +20,14 @@
 }
 
 .img{
-    width: 44px;
-    height: 44px;
+    user-select: none;
+    width: 35px;
+    height: 35px;
     border-radius: 100%;
-    margin-right: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .box_profile-content{
@@ -37,6 +41,7 @@
     margin: 0 0 0 0;
     color: #1d3a5f;
     font-size: 14px;
+    margin-left: 5px;
 }
 
 .tag-name_user{

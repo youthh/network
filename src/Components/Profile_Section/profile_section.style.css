@@ -1,69 +1,17 @@
-.profile_top {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  margin-bottom: 47px;
-}
+/* Error: Can't find stylesheet to import.
+ *   ,
+ * 1 | @import "src/styleGlobal";
+ *   |         ^^^^^^^^^^^^^^^^^
+ *   '
+ *   profile_section.style.scss 1:9  root stylesheet */
 
-.img_profile_box {
-  width: 150px;
-  height: 150px;
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
   display: block;
-  margin-right: 0;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Can't find stylesheet to import.\a   \2577 \a 1 \2502  @import \"src/styleGlobal\";\d\a   \2502          ^^^^^^^^^^^^^^^^^\a   \2575 \a   profile_section.style.scss 1:9  root stylesheet";
 }
-
-.profile_box-img {
-  border: 2px solid #1877f2;
-  border-radius: 100%;
-  padding: 3px;
-  text-align: center;
-}
-
-.profile_box_name {
-  font-size: 18px;
-}
-
-.post_container-profile {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 690px;
-}
-
-.no_Post {
-  text-align: center;
-  color: #1877f2;
-}
-
-.profile_text {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-.profile_folling_box {
-  display: flex;
-  justify-content: space-between;
-  width: 210px;
-  margin: 10px 0;
-}
-
-.img_profile_box img {
-  margin-right: 0;
-}
-
-.profile_bottom {
-  width: 690px;
-  border-top: 1px solid #2f5386;
-}
-
-.css-1h9z7r5-MuiButtonBase-root-MuiTab-root {
-  font-size: 13px !important;
-}
-
-.css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected {
-  color: #1877f2 !important;
-}
-
-/*# sourceMappingURL=profile_section.style.css.map */

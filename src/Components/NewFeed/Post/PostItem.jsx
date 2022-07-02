@@ -14,8 +14,11 @@ const PostItem = (props) => {
             <div className="block_info-post">
                 <div className="top_info">
                     <div>
-                        <img className="img img_person-post" src={props.imgUser} alt=""/>
-                        <div className="box_text-post">
+                        <div className="profile_box-img">
+                            <img className="img img_person-post" src={props.imgUser} alt=""/>
+                        </div>
+
+                    <div className="box_text-post">
                             <NavLink className="post_Username" to={"/" + props.userName} >{props.userName}</NavLink>
                             <p>{props.data}</p>
                         </div>
