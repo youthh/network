@@ -28,7 +28,6 @@ const ProfileSection = () => {
     const dispatch = useDispatch()
     let isFetching = useSelector(isFetch);
     let user = useSelector(state => state.userSlice.profileVisit)
-    let userProfile = useSelector(state => state.userSlice.user.name)
     const profile = useParams()
     const follow = (id) => {
         dispatch(thunkSetFollow(id)).then(() => {
@@ -44,8 +43,8 @@ const ProfileSection = () => {
 
 
     useEffect(() => {
-
-        dispatch(getUserProfilePage(profile.userProfile.split().join(' '))).then(() =>{
+        debugger
+        dispatch(getUserProfilePage(profile.userProfile)).then(() =>{
             dispatch(getUserProfilePost(profile.userProfile))
         })
 

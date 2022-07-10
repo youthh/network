@@ -17,57 +17,40 @@ import {
     thunkSetFollow, thunkSetFollower
 } from "../../../Slices/userSlice";
 import PeopleItemCard from "./PeopleItemCard";
+import {NavLink} from "react-router-dom";
+import {BsHouseDoor} from "react-icons/bs";
+
 const PeopleTabs = () => {
     const [value, setValue] = React.useState('1');
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+
         setValue(newValue);
     };
     let dispatch = useDispatch()
     let isFollow = useSelector(state => getFetch(state))
-
     let userId = useSelector(state => state.userSlice.user.id);
     let userN = useSelector(state => state.userSlice.user.name);
-
     let followers = useSelector(state => state.userSlice.user.followers)
     let following = useSelector(state => state.userSlice.user.following)
-    let followingPeople = useSelector(state => state.userSlice.user.followingU)
-
     let user = useSelector(state => state.userSlice.user);
 
 
-
     const follow = (id, followed, nameUser, e) => {
-        debugger
-        e.currentTarget.disabled = true;
         dispatch(thunkSetFollower({userId, id, followed, nameUser, userN}))
-        dispatch(thunkSetFollow({userId, id, followed, nameUser }))
+        dispatch(thunkSetFollow({userId, id, followed, nameUser}))
             .then(() => {
-            dispatch(setFollow({id, userN}))
+                dispatch(setFollow({id, userN}))
 
-        }).then(() => {
+            }).then(() => {
             dispatch(getAccountUser(user.name)).then((data) => {
                 dispatch(getFollowing(data.payload[0].data().following))
             })
 
         })
-        e.currentTarget.disabled = false;
     }
 
-    useEffect(() => {
-        dispatch(getAccountUser(user.name)).then((data) => {
 
-            dispatch(getFollowing(data.payload[0].data().following))
-            dispatch(thunkGetUserFollowersName(data.payload[0].data().followers))
-        })
-
-
-        return () => {
-            dispatch(setUsersNull())
-            dispatch(setFollowerNull())
-        }
-
-    }, [])
-    return(
+    return (
         <div>
             <TabContext value={value}>
                 <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
@@ -77,54 +60,22 @@ const PeopleTabs = () => {
                         <Tab label="Following" value="3"/>
                     </TabList>
                 </Box>
-                <TabPanel value="1"> <PeopleContainer isFollow={isFollow} follow={follow}/></TabPanel>
-                <TabPanel value="2">{followers.length > 0 ?
-                    followers.map((i) => {
-                        return i.map((p, key) => {
-
-                            return <div>
-
-                                <PeopleItemCard     followed={p.data.followed}
-                                                    follow={follow}
-                                                    id={p.id}
-                                                    key={key}
-                                                    nameUser={p.data.name.split('').join('')}
-                                                    follower={p.data.followers}
-                                                    followingg={p.data.following}
-                                                    tag={p.data.tagName}
-                                                    imgP={p.data.img}
-                                                    location={p.data.location}
-                                />
-                            </div>
-                        })
-                    })
-
-                    : <p>No followers yet</p>}</TabPanel>
+                <TabPanel value="1"> <PeopleContainer ren={"people"} isFollow={isFollow} follow={follow}/></TabPanel>
+                <TabPanel value="2">
+                    {followers.length > 0 ?
+                        <PeopleContainer ren={"followers"} isFollow={isFollow} follow={follow}/>
+                        :
+                        <p>No followers yet</p>}
+                </TabPanel>
                 <TabPanel value="3">{following.length > 0 ?
-                    followingPeople.map((i) => {
-                        return i.map((p, key) => {
-
-                            return <div>
-
-                                <PeopleItemCard     followed={p.data.followed}
-                                                    follow={follow}
-                                                    id={p.id}
-                                                    key={key}
-                                                    nameUser={p.data.name.split('').join('')}
-                                                    follower={p.data.followers}
-                                                    followingg={p.data.following}
-                                                    tag={p.data.tagName}
-                                                    imgP={p.data.img}
-                                                    location={p.data.location}
-                                />
-                            </div>
-                        })
-                    })
-                    : <p>No following yet</p>} </TabPanel>
+                    <PeopleContainer ren={"following"} isFollow={isFollow} follow={follow}/>
+                    :
+                    <p>No following yet</p>}
+                </TabPanel>
             </TabContext>
 
 
-       </div>
+        </div>
     )
 }
 

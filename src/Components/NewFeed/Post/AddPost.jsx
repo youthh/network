@@ -52,7 +52,7 @@ const AddPost = (props) => {
 
         let storage = getStorage();
         let refer = ref(storage, `user/${user.name}/${image.name}`)
-        let uploadTask = uploadBytesResumable(refer,  image);
+        let uploadTask = uploadBytesResumable(refer, image);
         uploadTask.on('state_changed',
             (snapshot) => {
 
@@ -60,7 +60,8 @@ const AddPost = (props) => {
                     dispatch(setProgress(true))
                 }
             },
-                    (err) => {},
+            (err) => {
+            },
             () => {
 
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
@@ -93,19 +94,20 @@ const AddPost = (props) => {
                 <div>
                     <img src={img}
                          className="img" alt="person"/>
-                    <input  ref={reff}  placeholder="What`s new Alex?" type="text"/>
+                    <input ref={reff} placeholder="What`s new Alex?" type="text"/>
                 </div>
                 <div>
                     <label htmlFor="contained-button-file">
-                        <Input onChange={(e) => handleChange(e)}   className="btn btn_post"
-                               accept="image/*" id="contained-button-file" multiple type="file" />
+                        <Input onChange={(e) => handleChange(e)} className="btn btn_post"
+                               accept="image/*" id="contained-button-file" multiple type="file"/>
                         <Button disabled={!!isProgress} className="btn btn_post" variant="contained" component="span">
                             Upload
                         </Button>
                     </label>
-                    <Button disabled={!!isProgress} onClick={() => addPost()} className="btn btn_post right" variant="contained">
+                    <Button disabled={!!isProgress} onClick={() => addPost()} className="btn btn_post right"
+                            variant="contained">
                         {
-                            isProgress ? <CircularProgress color="inherit" size={23} /> : 'Post it!'
+                            isProgress ? <CircularProgress color="inherit" size={23}/> : 'Post it!'
                         }
                     </Button>
                 </div>
@@ -116,7 +118,7 @@ const AddPost = (props) => {
             {
                 isSuccess ?
                     <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                        <Alert onClose={handleClose} severity="success" sx={{width: '100%'}}>
                             Post successfully added
                         </Alert>
                     </Snackbar>
@@ -127,5 +129,4 @@ const AddPost = (props) => {
 }
 
 
-
-export  default  AddPost;
+export default AddPost;

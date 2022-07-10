@@ -241,8 +241,8 @@ const userSlice = createSlice({
 
         },
         setProfilePageNull: (state) => {
-            state.profileVisit.following = null
-            state.profileVisit.followers = null
+            state.profileVisit.following = []
+            state.profileVisit.followers = []
             state.profileVisit.name = null
             state.profileVisit.img = null
             state.profileVisit.city = null
