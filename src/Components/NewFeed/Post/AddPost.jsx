@@ -49,7 +49,6 @@ const AddPost = (props) => {
     });
 
     const addPost = () => {
-
         let storage = getStorage();
         let refer = ref(storage, `user/${user.name}/${image.name}`)
         let uploadTask = uploadBytesResumable(refer, image);

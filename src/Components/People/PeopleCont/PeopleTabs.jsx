@@ -60,17 +60,20 @@ const PeopleTabs = () => {
                         <Tab label="Following" value="3"/>
                     </TabList>
                 </Box>
-                <TabPanel value="1"> <PeopleContainer ren={"people"} isFollow={isFollow} follow={follow}/></TabPanel>
+                <TabPanel value="1">
+                    <PeopleContainer categoryTab={"people"} isFollow={isFollow} follow={follow}/>
+                </TabPanel>
                 <TabPanel value="2">
                     {followers.length > 0 ?
-                        <PeopleContainer ren={"followers"} isFollow={isFollow} follow={follow}/>
+                        <PeopleContainer categoryTab={"followers"} isFollow={isFollow} follow={follow}/>
                         :
                         <p>No followers yet</p>}
                 </TabPanel>
-                <TabPanel value="3">{following.length > 0 ?
-                    <PeopleContainer ren={"following"} isFollow={isFollow} follow={follow}/>
-                    :
-                    <p>No following yet</p>}
+                <TabPanel value="3">
+                    {following.length > 0 ?
+                        <PeopleContainer categoryTab={"following"} isFollow={isFollow} follow={follow}/>
+                        :
+                        <p>No following yet</p>}
                 </TabPanel>
             </TabContext>
 

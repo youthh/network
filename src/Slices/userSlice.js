@@ -1,19 +1,18 @@
 import {createAsyncThunk, createSelector, createSlice} from "@reduxjs/toolkit";
-import {collection, getDocs, query, where, addDoc,
-    orderBy, updateDoc, doc, arrayUnion, arrayRemove} from "firebase/firestore";
+import {
+    collection, getDocs, query, where, addDoc,
+    orderBy, updateDoc, doc, arrayUnion, arrayRemove, setDoc
+} from "firebase/firestore";
 import {db} from "../Firebase/firebase";
-
-
-
-
-
+import {getDownloadURL, getStorage, ref, uploadBytesResumable, uploadString} from "firebase/storage";
+import {addNewPostThunk, setProgress, setSuccessPost, ThunkGetPost} from "./PostSlice";
 
 
 export const ThunkGetPeople = createAsyncThunk(
     'user/ThunkGetPeople',
     async () => {
         const user = collection(db, "users")
-        return   (await getDocs(user)).docs
+        return (await getDocs(user)).docs
 
 
     }
@@ -26,8 +25,8 @@ export const getUserProfilePost = createAsyncThunk(
 
         const postUser = query(refPost, orderBy('date', "desc"), where('name', '==', name))
 
-        const  s = (await getDocs(postUser)).docs
-        return  s
+        const s = (await getDocs(postUser)).docs
+        return s
     }
 )
 
@@ -37,7 +36,7 @@ export const getUserProfilePage = createAsyncThunk(
     async (name) => {
 
         const user = query(collection(db, "users"), where("name", "==", name.split('-').join(' ')));
-        return  (await getDocs(user)).docs
+        return (await getDocs(user)).docs
 
     }
 )
@@ -47,7 +46,7 @@ export const getCurrentUser = createAsyncThunk(
     async (name) => {
 
         const user = query(collection(db, "users"), where("name", "==", name));
-        return  (await getDocs(user)).docs
+        return (await getDocs(user)).docs
 
     }
 )
@@ -64,7 +63,7 @@ export const getFollowing = createAsyncThunk(
         }
 
 
-        return  arr
+        return arr
     }
 )
 
@@ -80,7 +79,7 @@ export const thunkGetUserFollowersName = createAsyncThunk(
         }
 
 
-        return  arr
+        return arr
     }
 )
 
@@ -99,8 +98,7 @@ export const thunkSetFollower = createAsyncThunk(
                 followers: arrayRemove(data.userN)
             });
 
-        }
-        else {
+        } else {
             const user = doc(db, 'users', data.id);
             await updateDoc(user, {
                 followed: true
@@ -130,8 +128,7 @@ export const thunkSetFollow = createAsyncThunk(
                 following: arrayRemove(data.nameUser)
             });
 
-        }
-        else {
+        } else {
             const user = doc(db, 'users', data.id);
             await updateDoc(user, {
                 followed: true
@@ -144,10 +141,8 @@ export const thunkSetFollow = createAsyncThunk(
         }
 
 
-
     }
 )
-
 export const getAccountUser = createAsyncThunk(
     'user/getAccountUser',
 
@@ -161,6 +156,29 @@ export const getAccountUser = createAsyncThunk(
     }
 )
 
+//////////  Add new User sign up
+
+export const addNewUserThunk = createAsyncThunk(
+    'user/addNewUserThunk',
+
+    async (data) => {
+        let url = data.user.photoURL;
+        debugger
+        let userName = data.user.email.split('@gmail.com').join('')
+        let user = {
+            name: userName,
+            location: '',
+            img: url,
+            followed: false,
+            followers: data.data.followers ?  data.data.following : [],
+            following:  data.data.following ?  data.data.following : []
+        }
+        debugger
+        await setDoc(doc(db, "users", data.user.uid), user);
+
+
+    }
+)
 
 
 const userSlice = createSlice({
@@ -183,7 +201,7 @@ const userSlice = createSlice({
             img: null,
             followingU: []
         },
-        profileVisit:{
+        profileVisit: {
             id: null,
             followers: [],
             following: [],
@@ -226,7 +244,7 @@ const userSlice = createSlice({
                         if (i === action.payload.userN) {
                             p.data.followers.splice(index, 1)
                         }
-                    }) :  p.data.followers.push(action.payload.userN)
+                    }) : p.data.followers.push(action.payload.userN)
 
                 }
             })
@@ -303,8 +321,13 @@ const userSlice = createSlice({
             state.isFollow = false
         },
         [getAccountUser.fulfilled]: (state, action) => {
-
-            state.user.following = action.payload[0].data().following
+            debugger
+            if(action.payload.length !== 0 ) {
+                state.user.following = action.payload[0].data().following
+            }
+            else {
+                state.user.following = []
+            }
         },
         [getFollowing.fulfilled]: (state, action) => {
             state.user.followingU = action.payload.map((i) => {
@@ -314,7 +337,7 @@ const userSlice = createSlice({
             })
 
         },
-        [thunkGetUserFollowersName.fulfilled]: (state,action) => {
+        [thunkGetUserFollowersName.fulfilled]: (state, action) => {
             state.user.followers = action.payload.map((i) => {
                 return i.map((i) => {
                     return {data: i.data(), id: i.id}
@@ -326,7 +349,8 @@ const userSlice = createSlice({
 })
 
 
-export const {setMenuProfile,
+export const {
+    setMenuProfile,
     setMenuAuth,
     setPostProfileNull,
     setUsersNull,

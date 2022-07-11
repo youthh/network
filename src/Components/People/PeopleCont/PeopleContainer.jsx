@@ -11,7 +11,7 @@ import {
 } from "../../../Slices/userSlice";
 import {CircularProgress} from "@mui/material";
 
-const PeopleContainer = ({follow, isFollow, ren}) => {
+const PeopleContainer = ({follow, isFollow, categoryTab}) => {
     let dispatch = useDispatch()
     let people = useSelector(state => state.userSlice.userPeople);
     let isFetching = useSelector(state => state.userSlice.isFetching);
@@ -38,7 +38,7 @@ const PeopleContainer = ({follow, isFollow, ren}) => {
 
     if (isFetching) {
         return <CircularProgress/>
-    } else if (ren === 'people') {
+    } else if (categoryTab === 'people') {
         return (
             <div className="People_container">
                 {
@@ -61,7 +61,7 @@ const PeopleContainer = ({follow, isFollow, ren}) => {
                 }
             </div>
         )
-    } else if (ren === 'followers') {
+    } else if (categoryTab === 'followers') {
         return (
             <div className="People_container">
                 {
@@ -85,7 +85,7 @@ const PeopleContainer = ({follow, isFollow, ren}) => {
                 }
             </div>
         )
-    } else if (ren === 'following') {
+    } else if (categoryTab === 'following') {
         return (
             <div className="People_container">
                 {
