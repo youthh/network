@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {collection, getDocs, doc, addDoc, query, serverTimestamp, orderBy} from "firebase/firestore";
+import {collection, getDocs, doc, addDoc, query, serverTimestamp, orderBy, where} from "firebase/firestore";
 import {db} from "../Firebase/firebase";
 
 
@@ -23,10 +23,21 @@ export const addNewPostThunk = createAsyncThunk(
 
 export const ThunkGetPost = createAsyncThunk(
     'Post/ThunkGetPost',
-    async () => {
-
-        const post = query(collection(db, "post"), orderBy('date', 'desc') )
-        let posts =  await getDocs(post)
+    async (data) => {
+        let posts;
+        let followPosts = []
+        let tab = data.postValue
+        if (tab === 'following') {
+            const post = collection(db, "post")
+            for (const i of data.followingUser) {
+                const q = query(post, where('name', "==", i), orderBy('date', 'desc'))
+                followPosts.push((await getDocs(q)).docs)
+            }
+            return {followPosts, tab}
+        } else {
+            const post = query(collection(db, "post"), orderBy('date', 'desc'))
+            posts = await getDocs(post)
+        }
 
         return posts.docs
     }
@@ -35,7 +46,6 @@ export const ThunkGetPost = createAsyncThunk(
 export const ThunkSetLike = createAsyncThunk(
     'Post/ThunkSetLike',
     async (data) => {
-
 
 
     }
@@ -50,6 +60,7 @@ const PostSlice = createSlice({
         isFetching: false,
         isSuccessPost: false,
         newPost: [],
+        followingPost: []
     },
 
     reducers: {
@@ -63,6 +74,7 @@ const PostSlice = createSlice({
         },
         setPostNull: (state) => {
             state.newPost = [];
+            state.followingPost = [];
         },
         setProgress: (state, action) => {
 
@@ -80,15 +92,24 @@ const PostSlice = createSlice({
         [ThunkGetPost.fulfilled]: (state, action) => {
             state.isFetching = false
 
-            state.newPost = action.payload.map((d) => {
-                return d.data()
+            if (action.payload.tab === 'following') {
 
-            })
+                state.followingPost = action.payload.followPosts.map((d) => {
+
+                    return d.map((i) => {
+                        return i.data()
+                    })
+
+                })
+            } else {
+                state.newPost = action.payload.map((d) => {
+                    return d.data()
+                })
+            }
         },
 
     }
 })
-
 
 
 export const getProgress = (state) => {

@@ -17,14 +17,12 @@ import Button from '@mui/material/Button';
 import {styled} from "@mui/material/styles";
 
 
-const AddPost = (props) => {
+const AddPost = ({dispatch}) => {
     let reff = useRef()
     let [image, setImg] = useState(null);
-    const img = useSelector(state => state.userSlice.user.img)
     const isProgress = useSelector(state => getProgress(state))
     const isSuccess = useSelector(state => getSuccessPost(state))
     const user = useSelector(state => getUser(state))
-    const dispatch = useDispatch()
     const [open, setOpen] = useState(isSuccess);
 
     const handleChange = (e) => {
@@ -91,9 +89,9 @@ const AddPost = (props) => {
         <div className="add_post_container">
             <div className="box box_post-add">
                 <div>
-                    <img src={img}
+                    <img src={user.img}
                          className="img" alt="person"/>
-                    <input ref={reff} placeholder="What`s new Alex?" type="text"/>
+                    <input ref={reff} placeholder={ user.name ? "What`s new " +  user.name + ' ?' : ''} type="text"/>
                 </div>
                 <div>
                     <label htmlFor="contained-button-file">

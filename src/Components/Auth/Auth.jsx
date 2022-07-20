@@ -3,7 +3,7 @@ import {GoogleAuthProvider, getAuth, signInWithPopup} from "firebase/auth";
 import app from "../../App";
 import {useDispatch, useSelector} from "react-redux";
 import {
-    addNewUserThunk,
+    addNewUserThunk, addSignUserThunk,
     getAccountUser,
     getCurrentUser,
     getFollowing,
@@ -17,12 +17,10 @@ const AuthCom = () => {
     const provider = new GoogleAuthProvider(app);
     const auth = getAuth();
     let dispatch = useDispatch();
-    let following = useSelector(state => state.userSlice.user.following)
 
     const signInGoogle = () => {
         signInWithPopup(auth, provider)
             .then((result) => {
-
                 const user = result.user;
                 dispatch(setUser(user))
                 dispatch(setMenuAuth())
@@ -30,13 +28,13 @@ const AuthCom = () => {
 
                 dispatch(getAccountUser(user.email.split('@gmail.com').join('')))
                     .then((value) => {
-                        debugger
+
                         let data = value.payload
-                        if(value.payload) {
-                            dispatch(addNewUserThunk({user, data}))
-                        }
-                        else {
-                            dispatch(addNewUserThunk({user, data}))
+                        if (value.payload.length !== 0) {
+                            data = value.payload[0].data();
+                            dispatch(addSignUserThunk({user, data}))
+                        } else {
+                            dispatch(addNewUserThunk({user}))
                         }
                     })
 
@@ -46,6 +44,7 @@ const AuthCom = () => {
             const errorMessage = error.message;
             const email = error.email;
             const credential = GoogleAuthProvider.credentialFromError(error);
+            console.log(error)
         });
 
     }

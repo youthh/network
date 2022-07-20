@@ -157,25 +157,42 @@ export const getAccountUser = createAsyncThunk(
 )
 
 //////////  Add new User sign up
-
-export const addNewUserThunk = createAsyncThunk(
-    'user/addNewUserThunk',
+export const addSignUserThunk = createAsyncThunk(
+    'user/addSignUserThunk',
 
     async (data) => {
         let url = data.user.photoURL;
+        let userName = data.user.email.split('@gmail.com').join('')
         debugger
+        let user = {
+            name: userName,
+            location: '',
+            img: url,
+            followed: false,
+            followers: data.data.followers ? data.data.followers : [],
+            following: data.data.following ? data.data.following : []
+        }
+
+        await setDoc(doc(db, "users", data.user.uid), user);
+
+
+    }
+)
+
+export const addNewUserThunk = createAsyncThunk(
+    'user/addNewUserThunk',
+    async (data) => {
+        let url = data.user.photoURL;
         let userName = data.user.email.split('@gmail.com').join('')
         let user = {
             name: userName,
             location: '',
             img: url,
             followed: false,
-            followers: data.data.followers ?  data.data.following : [],
-            following:  data.data.following ?  data.data.following : []
+            followers: [],
+            following: []
         }
-        debugger
         await setDoc(doc(db, "users", data.user.uid), user);
-
 
     }
 )
@@ -267,6 +284,15 @@ const userSlice = createSlice({
         },
         setPostProfileNull: (state) => {
             state.profileVisit.post = [];
+        },
+        setFollowValue: (state, action) => {
+            state.userPeople.map((i) => {
+                if (i.data.name === action.payload.follower) {
+
+                    i.data.followed = action.payload.value
+                }
+            })
+            state.profileVisit.followed = action.payload.value
         }
     },
 
@@ -278,7 +304,7 @@ const userSlice = createSlice({
             state.isFetching = false
 
             state.userPeople = action.payload.map((d) => {
-                return {data: d.data(), id: d.id};
+                return {data: d.data(), id: d.id}
 
             })
         },
@@ -322,10 +348,9 @@ const userSlice = createSlice({
         },
         [getAccountUser.fulfilled]: (state, action) => {
             debugger
-            if(action.payload.length !== 0 ) {
+            if (action.payload.length !== 0) {
                 state.user.following = action.payload[0].data().following
-            }
-            else {
+            } else {
                 state.user.following = []
             }
         },
@@ -357,7 +382,8 @@ export const {
     setFollow,
     setUser,
     setFollowerNull,
-    setProfilePageNull
+    setProfilePageNull,
+    setFollowValue
 } = userSlice.actions
 
 
@@ -365,6 +391,11 @@ export const getNameSp = (state) => {
 
     return state.userSlice.user.name ? state.userSlice.user.name.split(' ').join('') : null
 }
+
+export const getFollowingUser = (state) => {
+    return state.userSlice.user.following
+}
+
 
 export const isFetch = (state) => {
     return state.userSlice.isFetching

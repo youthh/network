@@ -3,38 +3,36 @@ import PeopleItemCard from "./PeopleItemCard";
 import './PeopleItemStyle.css'
 import {useDispatch, useSelector} from "react-redux";
 import {
-    getAccountUser, getFollowing, setPostProfileNull, setProfilePageNull,
-
+    getAccountUser, getFollowing, setFollowValue,
+    setPostProfileNull,
+    setProfilePageNull,
     setUsersNull,
     ThunkGetPeople, thunkGetUserFollowersName,
-    thunkSetFollow
 } from "../../../Slices/userSlice";
 import {CircularProgress} from "@mui/material";
+import {checkFollow} from "../PeopleSection";
 
-const PeopleContainer = ({follow, isFollow, categoryTab}) => {
+const PeopleContainer = ({follow, categoryTab, user,}) => {
+
     let dispatch = useDispatch()
     let people = useSelector(state => state.userSlice.userPeople);
     let isFetching = useSelector(state => state.userSlice.isFetching);
-    let user = useSelector(state => state.userSlice.user)
-    let followers = useSelector(state => state.userSlice.user.followers)
-    let followingPeople = useSelector(state => state.userSlice.user.followingU)
-
 
     useEffect(() => {
-        dispatch(ThunkGetPeople())
 
+        dispatch(ThunkGetPeople())
         dispatch(getAccountUser(user.name))
             .then((data) => {
 
-            dispatch(getFollowing(data.payload[0].data().following))
-            dispatch(thunkGetUserFollowersName(data.payload[0].data().followers))
-        })
-
+                dispatch(getFollowing(data.payload[0].data().following))
+                dispatch(thunkGetUserFollowersName(data.payload[0].data().followers))
+            })
         return () => {
             dispatch(setPostProfileNull())
             dispatch(setUsersNull())
         }
-    }, [])
+    }, [dispatch, user.name, categoryTab])
+
 
     if (isFetching) {
         return <CircularProgress/>
@@ -43,19 +41,22 @@ const PeopleContainer = ({follow, isFollow, categoryTab}) => {
             <div className="People_container">
                 {
                     people.map((p, key) => {
-                        return <PeopleItemCard
+                        if (p.data.name !== user.name) {
+                            checkFollow(p.data, dispatch, user.name)
+                            return <PeopleItemCard
 
-                            followed={p.data.followed}
-                            follow={follow}
-                            id={p.id}
-                            key={key}
-                            nameUser={p.data.name.split('').join('')}
-                            follower={p.data.followers}
-                            followingg={p.data.following}
-                            tag={p.data.tagName}
-                            imgP={p.data.img}
-                            location={p.data.location}
-                        />
+                                followed={p.data.followed}
+                                follow={follow}
+                                id={p.id}
+                                key={key}
+                                nameUser={p.data.name.split('').join('')}
+                                follower={p.data.followers}
+                                followingg={p.data.following}
+                                tag={p.data.tagName}
+                                imgP={p.data.img}
+                                location={p.data.location}
+                            />
+                        }
                     })
 
                 }
@@ -65,8 +66,10 @@ const PeopleContainer = ({follow, isFollow, categoryTab}) => {
         return (
             <div className="People_container">
                 {
-                    followers.map((i) => {
+                    user.followers.map((i) => {
                         return i.map((p, key) => {
+                            checkFollow(p.data, dispatch, user.name)
+
                             return <div>
                                 <PeopleItemCard followed={p.data.followed}
                                                 follow={follow}
@@ -89,8 +92,10 @@ const PeopleContainer = ({follow, isFollow, categoryTab}) => {
         return (
             <div className="People_container">
                 {
-                    followingPeople.map((i) => {
+                    user.followingU.map((i) => {
+
                         return i.map((p, key) => {
+
                             return <div>
                                 <PeopleItemCard followed={p.data.followed}
                                                 follow={follow}

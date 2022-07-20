@@ -10,7 +10,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {
     getAccountUser, getFetch,
     getFollowing,
-    setFollow, setFollowerNull,
+    setFollow, setFollowerNull, setFollowValue,
     setUsersNull,
     ThunkGetPeople,
     thunkGetUserFollowersName,
@@ -20,35 +20,10 @@ import PeopleItemCard from "./PeopleItemCard";
 import {NavLink} from "react-router-dom";
 import {BsHouseDoor} from "react-icons/bs";
 
-const PeopleTabs = () => {
-    const [value, setValue] = React.useState('1');
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+const PeopleTabs = ({value, handleChange, user, follow}) => {
 
-        setValue(newValue);
-    };
-    let dispatch = useDispatch()
-    let isFollow = useSelector(state => getFetch(state))
-    let userId = useSelector(state => state.userSlice.user.id);
-    let userN = useSelector(state => state.userSlice.user.name);
     let followers = useSelector(state => state.userSlice.user.followers)
     let following = useSelector(state => state.userSlice.user.following)
-    let user = useSelector(state => state.userSlice.user);
-
-
-    const follow = (id, followed, nameUser, e) => {
-        dispatch(thunkSetFollower({userId, id, followed, nameUser, userN}))
-        dispatch(thunkSetFollow({userId, id, followed, nameUser}))
-            .then(() => {
-                dispatch(setFollow({id, userN}))
-
-            }).then(() => {
-            dispatch(getAccountUser(user.name)).then((data) => {
-                dispatch(getFollowing(data.payload[0].data().following))
-            })
-
-        })
-    }
-
 
     return (
         <div>
@@ -61,17 +36,25 @@ const PeopleTabs = () => {
                     </TabList>
                 </Box>
                 <TabPanel value="1">
-                    <PeopleContainer categoryTab={"people"} isFollow={isFollow} follow={follow}/>
+                    <PeopleContainer user={user}
+                                     categoryTab={"people"}
+                                     follow={follow}/>
                 </TabPanel>
                 <TabPanel value="2">
                     {followers.length > 0 ?
-                        <PeopleContainer categoryTab={"followers"} isFollow={isFollow} follow={follow}/>
+                        <PeopleContainer
+                            user={user}
+                            categoryTab={"followers"}
+                            follow={follow}/>
                         :
                         <p>No followers yet</p>}
                 </TabPanel>
                 <TabPanel value="3">
                     {following.length > 0 ?
-                        <PeopleContainer categoryTab={"following"} isFollow={isFollow} follow={follow}/>
+                        <PeopleContainer
+                            user={user}
+                            categoryTab={"following"}
+                            follow={follow}/>
                         :
                         <p>No following yet</p>}
                 </TabPanel>
