@@ -24,6 +24,7 @@ export const addNewPostThunk = createAsyncThunk(
 export const ThunkGetPost = createAsyncThunk(
     'Post/ThunkGetPost',
     async (data) => {
+        debugger
         let posts;
         let followPosts = []
         let tab = data.postValue
@@ -90,8 +91,8 @@ const PostSlice = createSlice({
             state.isFetching = true
         },
         [ThunkGetPost.fulfilled]: (state, action) => {
+            debugger
             state.isFetching = false
-
             if (action.payload.tab === 'following') {
 
                 state.followingPost = action.payload.followPosts.map((d) => {
@@ -120,6 +121,11 @@ export const getProgress = (state) => {
 export const getSuccessPost = (state) => {
     return state.PostSlice.isSuccessPost
 }
+
+export const getFollowingPost = (state) => {
+    return state.PostSlice.followingPost
+}
+
 
 export const {setLikeAC, setPostNull, setProgress, setSuccessPost} = PostSlice.actions
 

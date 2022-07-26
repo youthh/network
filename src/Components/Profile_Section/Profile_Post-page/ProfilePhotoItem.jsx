@@ -6,7 +6,7 @@ import "./ProfilePhotoItem.style.scss"
 const ProfilePhotoItem = (props) => {
     return(
         <div className="profile_post_item">
-            <a href="#">
+            <a href="src/Components/Profile_Section/Profile_Post-page/ProfilePhotoItem#">
                 <div className="overlay">
                     <div>
                         <p className="count">{props.likes}</p>

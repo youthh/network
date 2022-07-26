@@ -25,7 +25,7 @@ const AuthCom = () => {
                 dispatch(setUser(user))
                 dispatch(setMenuAuth())
                 dispatch(getCurrentUser(user.displayName))
-
+                
                 dispatch(getAccountUser(user.email.split('@gmail.com').join('')))
                     .then((value) => {
 

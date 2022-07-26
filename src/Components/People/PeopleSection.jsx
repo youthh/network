@@ -5,7 +5,7 @@ import './PeopleStyleGlobal.css'
 import {
     getAccountUser,
     getFollowing,
-    setFollow,
+    setFollow, setFollowersValue,
     setFollowValue,
     thunkSetFollow,
     thunkSetFollower
@@ -17,12 +17,25 @@ export const checkFollow = (arr, dispatch, name) => {
     let value;
     if (arr.followers.includes(name)) {
         value = true
-        dispatch(setFollowValue({follower, value}))
+        dispatch(setFollowValue({follower, value, name}))
     }
     else {
         value = false
-        dispatch(setFollowValue({follower, value}))
+        //dispatch(setFollowersValue({value, name}))
+        dispatch(setFollowValue({follower, value, name}))
     }
+}
+export const setFollowTab = (arr, dispatch, name) => {
+    let value = true
+    if(arr.followers){
+        if (arr.followers.includes(name)) {
+            dispatch(setFollowersValue({value, name}))
+        } else {
+            value = false
+            dispatch(setFollowersValue({value, name}))
+        }
+    }
+
 }
 
 const PeopleSection = () => {
@@ -54,6 +67,7 @@ const PeopleSection = () => {
             <div className={"people_section"}>
                 <div>
                     <PeopleTabs handleChange={handleChange}
+                                dispatch={dispatch}
                                 follow={follow}
                                 user={user}
                                 value={value}

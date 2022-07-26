@@ -8,12 +8,13 @@ import {CircularProgress} from "@mui/material";
 
 const PeopleItemCard = (
     {
+        isFetching,
         imgP,
         nameUser,
         follower,
         followingg,
         location,
-        key,
+        mykey,
         id,
         followed,
         isFollow,
@@ -40,11 +41,11 @@ const PeopleItemCard = (
                            <p className="city_name-item">{location}</p>
                        </div>
                         <div className="bl" >
-                            <Button id={key}
+                            <Button id={mykey}
                                     onClick={(e) => follow(id, followed, nameUser, e)}
                                     className="btn btn_people-follow  btn_post right" variant="contained">
                                 {
-                                    isFollow ?  <CircularProgress color="inherit" size={23} /> : followed ?  'Unfollow' : 'Follow'
+                                    isFetching ?  <CircularProgress color="inherit" size={23} /> : followed ?  'Unfollow' : 'Follow'
                                 }
                             </Button>
                         </div>

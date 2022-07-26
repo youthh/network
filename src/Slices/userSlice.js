@@ -4,9 +4,6 @@ import {
     orderBy, updateDoc, doc, arrayUnion, arrayRemove, setDoc
 } from "firebase/firestore";
 import {db} from "../Firebase/firebase";
-import {getDownloadURL, getStorage, ref, uploadBytesResumable, uploadString} from "firebase/storage";
-import {addNewPostThunk, setProgress, setSuccessPost, ThunkGetPost} from "./PostSlice";
-
 
 export const ThunkGetPeople = createAsyncThunk(
     'user/ThunkGetPeople',
@@ -63,7 +60,7 @@ export const getFollowing = createAsyncThunk(
         }
 
 
-        return arr
+        return arr.flat()
     }
 )
 
@@ -78,8 +75,7 @@ export const thunkGetUserFollowersName = createAsyncThunk(
             arr[i] = (await getDocs(q)).docs
         }
 
-
-        return arr
+        return arr.flat()
     }
 )
 
@@ -95,7 +91,7 @@ export const thunkSetFollower = createAsyncThunk(
             const washingtonRef = doc(db, "users", data.id);
 
             await updateDoc(washingtonRef, {
-                followers: arrayRemove(data.userN)
+                followers: arrayRemove(data.userName)
             });
 
         } else {
@@ -106,7 +102,7 @@ export const thunkSetFollower = createAsyncThunk(
 
             const washingtonRef = doc(db, "users", data.id);
             await updateDoc(washingtonRef, {
-                followers: arrayUnion(data.userN)
+                followers: arrayUnion(data.userName)
             });
         }
     }
@@ -255,14 +251,17 @@ const userSlice = createSlice({
             state.userPeople.map((p) => {
 
                 if (p.id === action.payload.id) {
-
-                    p.data.followed = !p.data.followed
-                    !p.data.followed ? p.data.followers.forEach((i, index) => {
-                        if (i === action.payload.userN) {
-                            p.data.followers.splice(index, 1)
-                        }
-                    }) : p.data.followers.push(action.payload.userN)
-
+                    if (p.data.followed) {
+                        p.data.followers.forEach((i, index) => {
+                            if (i === action.payload.userName) {
+                                p.data.followers.splice(index, 1)
+                                p.data.followed = false
+                            }
+                        })
+                    } else {
+                        p.data.followers.push(action.payload.userName)
+                        p.data.followed = true
+                    }
                 }
             })
         },
@@ -270,9 +269,14 @@ const userSlice = createSlice({
             state.userPeople = [];
 
         },
+        setPeopleNull: (state) => {
+            state.user.following = [];
+            state.user.following = [];
+            state.user.followers = []
+        },
         setFollowerNull: (state) => {
             state.user.following = [];
-            state.user.followingU = [];
+            state.user.following = [];
 
         },
         setProfilePageNull: (state) => {
@@ -293,6 +297,24 @@ const userSlice = createSlice({
                 }
             })
             state.profileVisit.followed = action.payload.value
+        },
+        setFollowersValue: (state, action) => {
+            state.user.followers.map((i) => {
+                if (i.data.followers.includes(action.payload.name)) {
+                    return i.data.followed = action.payload.value
+                } else {
+                    return i.data.followed = action.payload.value
+                }
+            })
+            state.user.followingU.map((i) => {
+
+                if (i.data.followers.includes(action.payload.name)) {
+                    return i.data.followed = action.payload.value
+                } else {
+                    return i.data.followed = action.payload.value
+                }
+
+            })
         }
     },
 
@@ -302,7 +324,6 @@ const userSlice = createSlice({
         },
         [ThunkGetPeople.fulfilled]: (state, action) => {
             state.isFetching = false
-
             state.userPeople = action.payload.map((d) => {
                 return {data: d.data(), id: d.id}
 
@@ -347,7 +368,7 @@ const userSlice = createSlice({
             state.isFollow = false
         },
         [getAccountUser.fulfilled]: (state, action) => {
-            debugger
+
             if (action.payload.length !== 0) {
                 state.user.following = action.payload[0].data().following
             } else {
@@ -356,17 +377,13 @@ const userSlice = createSlice({
         },
         [getFollowing.fulfilled]: (state, action) => {
             state.user.followingU = action.payload.map((i) => {
-                return i.map((i) => {
-                    return {data: i.data(), id: i.id}
-                })
+                return {data: i.data(), id: i.id}
             })
 
         },
         [thunkGetUserFollowersName.fulfilled]: (state, action) => {
             state.user.followers = action.payload.map((i) => {
-                return i.map((i) => {
-                    return {data: i.data(), id: i.id}
-                })
+                return {data: i.data(), id: i.id}
             })
         }
     }
@@ -383,9 +400,15 @@ export const {
     setUser,
     setFollowerNull,
     setProfilePageNull,
-    setFollowValue
+    setFollowValue,
+    setFollowersValue,
+    setPeopleNull
 } = userSlice.actions
 
+
+export const getFollowers = (state) => {
+    return state.userSlice.user.followers
+}
 
 export const getNameSp = (state) => {
 

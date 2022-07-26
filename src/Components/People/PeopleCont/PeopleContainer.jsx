@@ -1,38 +1,20 @@
 import React, {useEffect} from "react";
 import PeopleItemCard from "./PeopleItemCard";
 import './PeopleItemStyle.css'
-import {useDispatch, useSelector} from "react-redux";
-import {
-    getAccountUser, getFollowing, setFollowValue,
-    setPostProfileNull,
-    setProfilePageNull,
-    setUsersNull,
-    ThunkGetPeople, thunkGetUserFollowersName,
-} from "../../../Slices/userSlice";
+import {useSelector} from "react-redux";
+
 import {CircularProgress} from "@mui/material";
-import {checkFollow} from "../PeopleSection";
+import {checkFollow, setFollowTab} from "../PeopleSection";
+import {
+    getAccountUser,
+    getFollowing,
+    setFollowersValue, setPeopleNull, setPostProfileNull, setUsersNull,
+    ThunkGetPeople,
+    thunkGetUserFollowersName
+} from "../../../Slices/userSlice";
 
-const PeopleContainer = ({follow, categoryTab, user,}) => {
-
-    let dispatch = useDispatch()
-    let people = useSelector(state => state.userSlice.userPeople);
-    let isFetching = useSelector(state => state.userSlice.isFetching);
-
-    useEffect(() => {
-
-        dispatch(ThunkGetPeople())
-        dispatch(getAccountUser(user.name))
-            .then((data) => {
-
-                dispatch(getFollowing(data.payload[0].data().following))
-                dispatch(thunkGetUserFollowersName(data.payload[0].data().followers))
-            })
-        return () => {
-            dispatch(setPostProfileNull())
-            dispatch(setUsersNull())
-        }
-    }, [dispatch, user.name, categoryTab])
-
+const PeopleContainer = ({follow, categoryTab, user, dispatch, isFetching}) => {
+    let people = useSelector(state => state.userSlice.userPeople)
 
     if (isFetching) {
         return <CircularProgress/>
@@ -40,15 +22,16 @@ const PeopleContainer = ({follow, categoryTab, user,}) => {
         return (
             <div className="People_container">
                 {
-                    people.map((p, key) => {
+                    people.map((p) => {
                         if (p.data.name !== user.name) {
                             checkFollow(p.data, dispatch, user.name)
                             return <PeopleItemCard
-
+                                isFetching={isFetching}
                                 followed={p.data.followed}
                                 follow={follow}
                                 id={p.id}
-                                key={key}
+                                mykey={p.id}
+                                key={p.id}
                                 nameUser={p.data.name.split('').join('')}
                                 follower={p.data.followers}
                                 followingg={p.data.following}
@@ -66,24 +49,25 @@ const PeopleContainer = ({follow, categoryTab, user,}) => {
         return (
             <div className="People_container">
                 {
-                    user.followers.map((i) => {
-                        return i.map((p, key) => {
-                            checkFollow(p.data, dispatch, user.name)
+                    user.followers.map((p) => {
+                        debugger
+                        //setFollowTab(p.data, dispatch, user.name)
+                        return <div>
+                            <PeopleItemCard followed={p.data.followed}
+                                            follow={follow}
+                                            id={p.id}
+                                            mykey={p.id}
+                                            key={p.id}
+                                            isFetching={isFetching}
+                                            nameUser={p.data.name.split('').join('')}
+                                            follower={p.data.followers}
+                                            followingg={p.data.following}
+                                            tag={p.data.tagName}
+                                            imgP={p.data.img}
+                                            location={p.data.location}
+                            />
+                        </div>
 
-                            return <div>
-                                <PeopleItemCard followed={p.data.followed}
-                                                follow={follow}
-                                                id={p.id}
-                                                key={key}
-                                                nameUser={p.data.name.split('').join('')}
-                                                follower={p.data.followers}
-                                                followingg={p.data.following}
-                                                tag={p.data.tagName}
-                                                imgP={p.data.img}
-                                                location={p.data.location}
-                                />
-                            </div>
-                        })
                     })
                 }
             </div>
@@ -92,25 +76,26 @@ const PeopleContainer = ({follow, categoryTab, user,}) => {
         return (
             <div className="People_container">
                 {
-                    user.followingU.map((i) => {
-
-                        return i.map((p, key) => {
-
+                        user.followingU.map((p) => {
+                            debugger
+                            // setFollowTab(p.data, dispatch, user.name)
                             return <div>
                                 <PeopleItemCard followed={p.data.followed}
                                                 follow={follow}
                                                 id={p.id}
-                                                key={key}
+                                                mykey={p.id}
+                                                key={p.id}
                                                 nameUser={p.data.name.split('').join('')}
                                                 follower={p.data.followers}
                                                 followingg={p.data.following}
                                                 tag={p.data.tagName}
                                                 imgP={p.data.img}
                                                 location={p.data.location}
+                                                isFetching={isFetching}
                                 />
                             </div>
-                        })
-                    })
+
+                        }) 
                 }
             </div>
         )

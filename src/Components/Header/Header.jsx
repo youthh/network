@@ -16,7 +16,6 @@ const Header = () => {
     let isMenuAc = useSelector(state => state.userSlice.isMenu)
     let img = useSelector(state => state.userSlice.user.img)
     let reference = useRef();
-    let refInput = useRef();
 
 
     useEffect(() => {

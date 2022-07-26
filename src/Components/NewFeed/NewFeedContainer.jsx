@@ -21,6 +21,8 @@ const NewFeedContainer = () => {
         setValue(newValue);
     };
 
+
+
     const setLikeThunk = (data, liked) => {
         dispatch(ThunkSetLike({data, liked})).then(() => {
             dispatch(setLikeAC({data, liked}))

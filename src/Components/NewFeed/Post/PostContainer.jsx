@@ -1,18 +1,19 @@
 import React, {useEffect} from 'react'
 import "./Post.style.css"
 import PostItem from "./PostItem";
-import {setLikeAC, setPostNull, ThunkGetPost, ThunkSetLike} from "../../../Slices/PostSlice";
+import {getFollowingPost, setLikeAC, setPostNull, ThunkGetPost, ThunkSetLike} from "../../../Slices/PostSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {CircularProgress} from "@mui/material";
 import {getFollowingUser} from "../../../Slices/userSlice";
 
 
 const PostContainer = ({postValue, posts, isFetching, setLikeThunk, dispatch}) => {
-    let followingPosts = useSelector(state => state.PostSlice.followingPost)
+    let followingPosts = useSelector(state => getFollowingPost(state))
     let followingUser = useSelector(state => getFollowingUser(state))
 
 
     useEffect(() => {
+
         dispatch(ThunkGetPost({followingUser, postValue}))
         return () => {
             dispatch(setPostNull())
@@ -26,6 +27,7 @@ const PostContainer = ({postValue, posts, isFetching, setLikeThunk, dispatch}) =
                 isFetching ? <CircularProgress/> :
                     postValue === 'all' ?
                         posts.map((p, index) => {
+
                             return <PostItem post={posts}
                                              isFollow={p.isFollow}
                                              key={index}
@@ -42,7 +44,9 @@ const PostContainer = ({postValue, posts, isFetching, setLikeThunk, dispatch}) =
                         })
                         :
                         followingPosts.map((i) => {
+
                             return i.map((p, index) => {
+
                                 return <PostItem post={posts}
                                                  key={index}
                                                  userName={p.name}

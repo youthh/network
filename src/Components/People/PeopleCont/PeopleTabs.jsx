@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -8,9 +8,9 @@ import PeopleContainer from "./PeopleContainer";
 import '../PeopleStyleGlobal.css'
 import {useDispatch, useSelector} from "react-redux";
 import {
-    getAccountUser, getFetch,
+    getAccountUser, getFetch, getFollowers,
     getFollowing,
-    setFollow, setFollowerNull, setFollowValue,
+    setFollow, setFollowerNull, setFollowValue, setPeopleNull, setPostProfileNull,
     setUsersNull,
     ThunkGetPeople,
     thunkGetUserFollowersName,
@@ -20,10 +20,27 @@ import PeopleItemCard from "./PeopleItemCard";
 import {NavLink} from "react-router-dom";
 import {BsHouseDoor} from "react-icons/bs";
 
-const PeopleTabs = ({value, handleChange, user, follow}) => {
-
-    let followers = useSelector(state => state.userSlice.user.followers)
+const PeopleTabs = ({value, handleChange, user, follow, dispatch}) => {
+    let followers = useSelector(state => getFollowers(state))
     let following = useSelector(state => state.userSlice.user.following)
+    let isFetching = useSelector(state => state.userSlice.isFetching);
+
+    useEffect(() => {
+        dispatch(ThunkGetPeople())
+
+        dispatch(getAccountUser(user.name))
+            .then((data) => {
+
+                dispatch(thunkGetUserFollowersName(data.payload[0].data().followers))
+                dispatch(getFollowing(data.payload[0].data().following))
+            })
+
+        return () => {
+            dispatch(setPostProfileNull())
+            dispatch(setUsersNull())
+            dispatch(setPeopleNull())
+        }
+    }, [dispatch, user.name])
 
     return (
         <div>
@@ -37,15 +54,21 @@ const PeopleTabs = ({value, handleChange, user, follow}) => {
                 </Box>
                 <TabPanel value="1">
                     <PeopleContainer user={user}
-                                     categoryTab={"people"}
-                                     follow={follow}/>
+                                     categoryTab={'people'}
+                                     follow={follow}
+                                     isFetching={isFetching}
+                                     dispatch={dispatch}
+                    />
                 </TabPanel>
                 <TabPanel value="2">
                     {followers.length > 0 ?
                         <PeopleContainer
                             user={user}
-                            categoryTab={"followers"}
-                            follow={follow}/>
+                            categoryTab={'followers'}
+                            follow={follow}
+                            dispatch={dispatch}
+                            isFetching={isFetching}
+                        />
                         :
                         <p>No followers yet</p>}
                 </TabPanel>
@@ -53,8 +76,11 @@ const PeopleTabs = ({value, handleChange, user, follow}) => {
                     {following.length > 0 ?
                         <PeopleContainer
                             user={user}
-                            categoryTab={"following"}
-                            follow={follow}/>
+                            categoryTab={'following'}
+                            follow={follow}
+                            dispatch={dispatch}
+                            isFetching={isFetching}
+                        />
                         :
                         <p>No following yet</p>}
                 </TabPanel>
