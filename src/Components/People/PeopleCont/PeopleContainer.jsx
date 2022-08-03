@@ -3,22 +3,14 @@ import PeopleItemCard from "./PeopleItemCard";
 import './PeopleItemStyle.css'
 import {useSelector} from "react-redux";
 
-import {CircularProgress} from "@mui/material";
 import {checkFollow, setFollowTab} from "../PeopleSection";
-import {
-    getAccountUser,
-    getFollowing,
-    setFollowersValue, setPeopleNull, setPostProfileNull, setUsersNull,
-    ThunkGetPeople,
-    thunkGetUserFollowersName
-} from "../../../Slices/userSlice";
 
-const PeopleContainer = ({follow, categoryTab, user, dispatch, isFetching}) => {
+
+const PeopleContainer = ({categoryTab, user, dispatch, isFetching}) => {
     let people = useSelector(state => state.userSlice.userPeople)
 
-    if (isFetching) {
-        return <CircularProgress/>
-    } else if (categoryTab === 'people') {
+
+     if (categoryTab === 'people') {
         return (
             <div className="People_container">
                 {
@@ -26,9 +18,10 @@ const PeopleContainer = ({follow, categoryTab, user, dispatch, isFetching}) => {
                         if (p.data.name !== user.name) {
                             checkFollow(p.data, dispatch, user.name)
                             return <PeopleItemCard
+                                user={user}
+                                dispatch={dispatch}
                                 isFetching={isFetching}
                                 followed={p.data.followed}
-                                follow={follow}
                                 id={p.id}
                                 mykey={p.id}
                                 key={p.id}
@@ -50,12 +43,12 @@ const PeopleContainer = ({follow, categoryTab, user, dispatch, isFetching}) => {
             <div className="People_container">
                 {
                     user.followers.map((p) => {
-                        debugger
-                        //setFollowTab(p.data, dispatch, user.name)
+                        setFollowTab(p.data, dispatch, user.name)
                         return <div>
                             <PeopleItemCard followed={p.data.followed}
-                                            follow={follow}
+                                            dispatch={dispatch}
                                             id={p.id}
+                                            user={user}
                                             mykey={p.id}
                                             key={p.id}
                                             isFetching={isFetching}
@@ -77,14 +70,14 @@ const PeopleContainer = ({follow, categoryTab, user, dispatch, isFetching}) => {
             <div className="People_container">
                 {
                         user.followingU.map((p) => {
-                            debugger
-                            // setFollowTab(p.data, dispatch, user.name)
+                            setFollowTab(p.data, dispatch, user.name)
                             return <div>
                                 <PeopleItemCard followed={p.data.followed}
-                                                follow={follow}
                                                 id={p.id}
+                                                dispatch={dispatch}
                                                 mykey={p.id}
                                                 key={p.id}
+                                                user={user}
                                                 nameUser={p.data.name.split('').join('')}
                                                 follower={p.data.followers}
                                                 followingg={p.data.following}

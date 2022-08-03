@@ -1,14 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
 import './PeopleItemStyle.css'
 import {IoLocationSharp} from "react-icons/io5";
 import {NavLink} from "react-router-dom";
 import Button from "@mui/material/Button";
-
+import  {Follow}  from '../PeopleSection'
 import {CircularProgress} from "@mui/material";
 
 const PeopleItemCard = (
     {
-        isFetching,
         imgP,
         nameUser,
         follower,
@@ -17,9 +16,12 @@ const PeopleItemCard = (
         mykey,
         id,
         followed,
-        isFollow,
-        follow
+        dispatch,
+        user
 }) => {
+    let [isFetch, setState] = useState(false)
+
+
     return(
         <div className="box box_people-item">
 
@@ -36,16 +38,20 @@ const PeopleItemCard = (
                         <p>{followingg.length + " following"} </p>
                     </div>
                     <div className="people_block_location">
-                       <div className="location_div">
-                           <IoLocationSharp color={"#1d3a5f"}/>
-                           <p className="city_name-item">{location}</p>
-                       </div>
+                        {
+                            location &&
+                            <div className="location_div">
+                                <IoLocationSharp color={"#1d3a5f"}/>
+                                <p className="city_name-item">{location}</p>
+                            </div>
+                        }
                         <div className="bl" >
                             <Button id={mykey}
-                                    onClick={(e) => follow(id, followed, nameUser, e)}
+                                    disabled={isFetch}
+                                    onClick={(e) => Follow(id, followed, nameUser, setState, dispatch, user.name, user.id)}
                                     className="btn btn_people-follow  btn_post right" variant="contained">
                                 {
-                                    isFetching ?  <CircularProgress color="inherit" size={23} /> : followed ?  'Unfollow' : 'Follow'
+                                    isFetch ?  <CircularProgress color="inherit" size={23} /> : followed ?  'Unfollow' : 'Follow'
                                 }
                             </Button>
                         </div>

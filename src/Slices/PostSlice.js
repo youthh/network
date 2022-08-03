@@ -1,5 +1,16 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {collection, getDocs, doc, addDoc, query, serverTimestamp, orderBy, where} from "firebase/firestore";
+import {
+    collection,
+    getDocs,
+    doc,
+    addDoc,
+    query,
+    serverTimestamp,
+    orderBy,
+    where,
+    updateDoc,
+    arrayRemove, arrayUnion
+} from "firebase/firestore";
 import {db} from "../Firebase/firebase";
 
 
@@ -8,7 +19,7 @@ export const addNewPostThunk = createAsyncThunk(
     async (data) => {
 
         const docRef = await addDoc(collection(db, "post"), {
-            countOfLikes: 0,
+            countOfLikes: [],
             countOfCom: 0,
             date: serverTimestamp(),
             text: data.data.text,
@@ -24,7 +35,7 @@ export const addNewPostThunk = createAsyncThunk(
 export const ThunkGetPost = createAsyncThunk(
     'Post/ThunkGetPost',
     async (data) => {
-        debugger
+
         let posts;
         let followPosts = []
         let tab = data.postValue
@@ -34,6 +45,8 @@ export const ThunkGetPost = createAsyncThunk(
                 const q = query(post, where('name', "==", i), orderBy('date', 'desc'))
                 followPosts.push((await getDocs(q)).docs)
             }
+            followPosts.flat(3)
+
             return {followPosts, tab}
         } else {
             const post = query(collection(db, "post"), orderBy('date', 'desc'))
@@ -48,6 +61,18 @@ export const ThunkSetLike = createAsyncThunk(
     'Post/ThunkSetLike',
     async (data) => {
 
+        const post = doc(db, 'post', data.id);
+
+        if (data.likes.includes(data.nameUser)){
+            await updateDoc(post, {
+                countOfLikes: arrayRemove(data.nameUser)
+            });
+        }
+        else {
+            await updateDoc(post, {
+                countOfLikes: arrayUnion(data.nameUser)
+            });
+        }
 
     }
 )
@@ -61,21 +86,23 @@ const PostSlice = createSlice({
         isFetching: false,
         isSuccessPost: false,
         newPost: [],
-        followingPost: []
     },
 
     reducers: {
         setLikeAC: (state, data) => {
 
             state.newPost.map((post) => {
-                if (post.id === data.payload.data) {
-                    data.payload.liked ? post.likeCount-- : post.likeCount++
+
+                if (post.id === data.payload.id) {
+
+                    post.data.countOfLikes.includes(data.payload.nameUser) ?
+                        post.data.countOfLikes.pop(data.payload.nameUser) :
+                        post.data.countOfLikes.push(data.payload.nameUser)
                 }
             })
         },
         setPostNull: (state) => {
             state.newPost = [];
-            state.followingPost = [];
         },
         setProgress: (state, action) => {
 
@@ -91,20 +118,17 @@ const PostSlice = createSlice({
             state.isFetching = true
         },
         [ThunkGetPost.fulfilled]: (state, action) => {
-            debugger
+
             state.isFetching = false
+
             if (action.payload.tab === 'following') {
+                state.newPost = action.payload.followPosts.flat().map((d) => {
 
-                state.followingPost = action.payload.followPosts.map((d) => {
-
-                    return d.map((i) => {
-                        return i.data()
-                    })
-
+                    return {data: d.data(), id: d.id}
                 })
             } else {
                 state.newPost = action.payload.map((d) => {
-                    return d.data()
+                    return  {data: d.data(), id: d.id}
                 })
             }
         },
@@ -123,7 +147,7 @@ export const getSuccessPost = (state) => {
 }
 
 export const getFollowingPost = (state) => {
-    return state.PostSlice.followingPost
+    return state.PostSlice.newPost
 }
 
 

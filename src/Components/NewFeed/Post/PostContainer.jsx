@@ -1,67 +1,30 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import "./Post.style.css"
 import PostItem from "./PostItem";
-import {getFollowingPost, setLikeAC, setPostNull, ThunkGetPost, ThunkSetLike} from "../../../Slices/PostSlice";
-import {useDispatch, useSelector} from "react-redux";
+
 import {CircularProgress} from "@mui/material";
-import {getFollowingUser} from "../../../Slices/userSlice";
 
 
-const PostContainer = ({postValue, posts, isFetching, setLikeThunk, dispatch}) => {
-    let followingPosts = useSelector(state => getFollowingPost(state))
-    let followingUser = useSelector(state => getFollowingUser(state))
-
-
-    useEffect(() => {
-
-        dispatch(ThunkGetPost({followingUser, postValue}))
-        return () => {
-            dispatch(setPostNull())
-        }
-
-    }, [dispatch, followingUser, postValue])
-
+const PostContainer = ({posts, isFetching, user, setLike}) => {
+    
     return (
         <div>
             {
                 isFetching ? <CircularProgress/> :
-                    postValue === 'all' ?
                         posts.map((p, index) => {
-
-                            return <PostItem post={posts}
-                                             isFollow={p.isFollow}
+                            return <PostItem setLike={setLike}
                                              key={index}
-                                             userName={p.name}
-                                             text={p.text}
-                                             data={new Date(p.date.seconds * 1000).toLocaleString('PT')}
-                                             likeCount={p.countOfLikes}
-                                             comment={p.countOfCom}
-                                             img={p.img}
+                                             userName={p.data.name}
+                                             text={p.data.text}
+                                             date={new Date(p.data.date.seconds * 1000).toLocaleString('PT')}
+                                             likeCount={p.data.countOfLikes}
+                                             comment={p.data.countOfCom}
+                                             img={p.data.img}
+                                             user={user}
                                              id={p.id}
-                                             setLikeThunk={setLikeThunk}
-                                             imgUser={p.userImg}
+                                             imgUser={p.data.userImg}
                             />
                         })
-                        :
-                        followingPosts.map((i) => {
-
-                            return i.map((p, index) => {
-
-                                return <PostItem post={posts}
-                                                 key={index}
-                                                 userName={p.name}
-                                                 text={p.text}
-                                                 data={new Date(p.date.seconds * 1000).toLocaleString('PT')}
-                                                 likeCount={p.countOfLikes}
-                                                 comment={p.countOfCom}
-                                                 img={p.img}
-                                                 id={p.id}
-                                                 setLikeThunk={setLikeThunk}
-                                                 imgUser={p.userImg}
-                                />
-                            })
-                        })
-
             }
         </div>
     )

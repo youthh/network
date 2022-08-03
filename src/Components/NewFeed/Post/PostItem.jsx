@@ -5,8 +5,11 @@ import {NavLink} from "react-router-dom";
 
 
 
-const PostItem = (props) => {
-    const [liked, setLiked] = useState(false);
+
+const PostItem = ({imgUser, userName, date, text, img, id,
+                      likeCount,
+                      user,
+                      setLike}) => {
 
 
     return(
@@ -15,12 +18,12 @@ const PostItem = (props) => {
                 <div className="top_info">
                     <div>
                         <div className="profile_box-img">
-                            <img className="img img_person-post" src={props.imgUser} alt=""/>
+                            <img className="img img_person-post" src={imgUser} alt=""/>
                         </div>
 
                     <div className="box_text-post">
-                            <NavLink className="post_Username" to={"/" + props.userName} >{props.userName}</NavLink>
-                            <p>{props.data}</p>
+                            <NavLink className="post_Username" to={"/" + userName} >{userName}</NavLink>
+                            <p>{date}</p>
                         </div>
                     </div>
                     <div className="box dots_block">
@@ -29,25 +32,22 @@ const PostItem = (props) => {
                 </div>
                 <p className="text_info">
                     {
-                        props.text
+                        text
                     }
                 </p>
             </div>
             <div className="photo_post">
                 {
-                    props.img ?  <img className="img_post" src={props.img} alt="post_img"/> : null
+                    img ?  <img className="img_post" src={img} alt="post_img"/> : null
                 }
             </div>
 
 
             <div className="bottom__posts">
                 <div  >
-                    <BsHeartFill onClick={() => {
-                        setLiked((val) => !val)
-                        props.setLikeThunk(props.id, liked);
-                    }}
-                                 size="25" color={liked ?  '#1877f2' : '#acb5c3'}/>
-                    <p>{props.likeCount}</p>
+                    <BsHeartFill onClick={() => setLike(id, userName,  user.name, likeCount)}
+                                 size="25" color={likeCount.includes(user.name) ?  '#1877f2' : '#acb5c3'}/>
+                    <p>{likeCount.length}</p>
                 </div>
                 <div>
                     <MdOutlineModeComment size={26}/>

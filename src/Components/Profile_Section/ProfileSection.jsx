@@ -1,4 +1,4 @@
-import React, {useEffect} from "react"
+import React, {useState, useEffect} from "react"
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import './profile_section.style.scss'
@@ -9,50 +9,66 @@ import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
 import {Avatar, CircularProgress} from "@mui/material";
 import TabList from '@mui/lab/TabList';
+//import Follow from '../People/PeopleSection'
 import {
-    getAccountUser, getFollowing,
+    getAccountUser,
+    getFollowing,
+    setFollow, setFollowersValue,
+    setFollowValue,
+    thunkSetFollow,
+    thunkSetFollower,
     getUserProfilePage,
-    isFetch,
-    setFollow, setFollowValue,
-    setPostProfileNull,
     setProfilePageNull,
-    thunkSetFollow
+    setPostProfileNull
 } from "../../Slices/userSlice";
 import ProfilePhotoItem from "./Profile_Post-page/ProfilePhotoItem";
 import {getUserProfilePost} from "../../Slices/userSlice";
-
 import Button from "@mui/material/Button";
 import {checkFollow} from "../People/PeopleSection";
 
-const ProfileSection = ({}) => {
+const ProfileSection = () => {
     const dispatch = useDispatch()
-    let isFetching = useSelector(isFetch);
     const profile = useParams()
     let userVisit = useSelector(state => state.userSlice.profileVisit)
     let user = useSelector(state => state.userSlice.user)
-    const [value, setValue] = React.useState('1');
-
-    const follow = (id) => {
-        dispatch(thunkSetFollow(id)).then(() => {
-            dispatch(setFollow(id))
-            dispatch(getAccountUser(userVisit.name))
-        })
+    const [value, setValue] =useState('1');
+    let [isFetch, setState] = useState(false)
+    let isFetching = useSelector(state => state.userSlice.isFetching);
 
 
-    }
+    function follow (id, followed, nameUser, setState, myUser, myID) {
+        
+        let userName = myUser
+        let userId = myID
+        setState(prev => !prev)
+                debugger
+        Promise.all([
+            dispatch(thunkSetFollower({userId, id, followed, nameUser, userName})),
+            dispatch(thunkSetFollow({userId, id, followed, nameUser})),
+            dispatch(getAccountUser(myUser)),
+            dispatch(setFollow({id, userName}))
+        ]).then((data) => {
+            debugger
+            setState(prev => !prev)
+            dispatch(getFollowing(data[2].payload[0].data().following))
+    })
+
+}
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
     useEffect(() => {
 
-        dispatch(getUserProfilePage(profile.userProfile)).then(() => {
+        Promise.all([
+            dispatch(getUserProfilePage(profile.userProfile)),
             dispatch(getUserProfilePost(profile.userProfile))
-        })
-        // return () => {
-        //     dispatch(setProfilePageNull())
-        //     dispatch(setPostProfileNull())
-        // }
+        ])
+
+        return () => {
+            dispatch(setProfilePageNull())
+            dispatch(setPostProfileNull())
+        }
     }, [profile.userProfile], [userVisit.post])
 
     return (
@@ -96,16 +112,18 @@ const ProfileSection = ({}) => {
                                         <div className="box_btn">
                                             {
                                                 checkFollow(userVisit, dispatch, user.name)
-
+                                                
                                             }
-                                            <Button onClick={() => follow(userVisit.id)}
-                                                    className="btn btn_post btn_people-follow" variant="contained"
-                                                    component="span">
-                                                {userVisit.followed ? "Unfollow" : "Follow"}
+                                            
+                                            <Button 
+                                            onClick={() => 
+                                                follow(userVisit.id, userVisit.followed, userVisit.name, setState, user.name, user.id)}
+                                                className="btn btn_post btn_people-follow" variant="contained" disabled={isFetch} >
+                                                {isFetch ? <CircularProgress color="inherit" size={23}/>  : userVisit.followed ? "Unfollow" : "Follow"}
                                             </Button>
                                             <Button className="btn btn_send" variant="contained" component="span">
                                                 {<EmailIcon fontSize="medium"/>}
-                                            </Button>
+                                            </Button> 
                                         </div>
                                 }
                             </div>
@@ -124,7 +142,6 @@ const ProfileSection = ({}) => {
                                         userVisit.post.length > 0 ?
                                             <div className="post_container-profile">
                                                 {
-                                                    isFetching ? <CircularProgress/> :
                                                         userVisit.post.map((i, index) => {
                                                             return <ProfilePhotoItem
                                                                 key={index}

@@ -111,26 +111,23 @@ export const thunkSetFollower = createAsyncThunk(
 export const thunkSetFollow = createAsyncThunk(
     'user/setFollow',
     async (data) => {
+        const user = doc(db, 'users', data.id);
+        const washingtonRef = doc(db, "users", data.userId);
 
 
         if (data.followed) {
-            const user = doc(db, 'users', data.id);
             await updateDoc(user, {
                 followed: false
             })
-            const washingtonRef = doc(db, "users", data.userId);
 
             await updateDoc(washingtonRef, {
                 following: arrayRemove(data.nameUser)
             });
 
         } else {
-            const user = doc(db, 'users', data.id);
             await updateDoc(user, {
                 followed: true
             })
-
-            const washingtonRef = doc(db, "users", data.userId);
             await updateDoc(washingtonRef, {
                 following: arrayUnion(data.nameUser)
             });
@@ -249,18 +246,18 @@ const userSlice = createSlice({
         setFollow: (state, action) => {
 
             state.userPeople.map((p) => {
-
+                    
                 if (p.id === action.payload.id) {
                     if (p.data.followed) {
                         p.data.followers.forEach((i, index) => {
                             if (i === action.payload.userName) {
                                 p.data.followers.splice(index, 1)
-                                p.data.followed = false
+                                p.data.followed = false;
                             }
                         })
                     } else {
                         p.data.followers.push(action.payload.userName)
-                        p.data.followed = true
+                        p.data.followed = true;
                     }
                 }
             })
@@ -270,13 +267,13 @@ const userSlice = createSlice({
 
         },
         setPeopleNull: (state) => {
-            state.user.following = [];
+            state.user.followingU = [];
             state.user.following = [];
             state.user.followers = []
         },
         setFollowerNull: (state) => {
             state.user.following = [];
-            state.user.following = [];
+            state.user.followingU = [];
 
         },
         setProfilePageNull: (state) => {
@@ -285,9 +282,13 @@ const userSlice = createSlice({
             state.profileVisit.name = null
             state.profileVisit.img = null
             state.profileVisit.city = null
+            state.profileVisit.id = null
         },
         setPostProfileNull: (state) => {
             state.profileVisit.post = [];
+        },
+        setFetching: (state) => {
+            state.isFetching = !state.isFetching
         },
         setFollowValue: (state, action) => {
             state.userPeople.map((i) => {
@@ -323,7 +324,7 @@ const userSlice = createSlice({
             state.isFetching = true;
         },
         [ThunkGetPeople.fulfilled]: (state, action) => {
-            state.isFetching = false
+            // state.isFetching = false
             state.userPeople = action.payload.map((d) => {
                 return {data: d.data(), id: d.id}
 
@@ -354,9 +355,11 @@ const userSlice = createSlice({
             })
 
         },
+        [getUserProfilePost.pending]: (state) => {
+            state.isFetching = true
+        },
         [getUserProfilePost.fulfilled]: (state, action) => {
-
-
+            state.isFetching = false
             state.profileVisit.post = action.payload.map((d) => {
                 return d.data()
             });
@@ -367,8 +370,8 @@ const userSlice = createSlice({
         [thunkSetFollow.fulfilled]: (state) => {
             state.isFollow = false
         },
-        [getAccountUser.fulfilled]: (state, action) => {
 
+        [getAccountUser.fulfilled]: (state, action) => {
             if (action.payload.length !== 0) {
                 state.user.following = action.payload[0].data().following
             } else {
@@ -381,10 +384,12 @@ const userSlice = createSlice({
             })
 
         },
+
         [thunkGetUserFollowersName.fulfilled]: (state, action) => {
             state.user.followers = action.payload.map((i) => {
                 return {data: i.data(), id: i.id}
             })
+            state.isFetching = false
         }
     }
 
@@ -402,7 +407,8 @@ export const {
     setProfilePageNull,
     setFollowValue,
     setFollowersValue,
-    setPeopleNull
+    setPeopleNull,
+    setFetching
 } = userSlice.actions
 
 

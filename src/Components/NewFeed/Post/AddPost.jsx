@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useRef, useState} from 'react'
 import './AddPost.style.css'
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {
     addNewPostThunk,
     getProgress,
@@ -9,7 +9,6 @@ import {
     setSuccessPost,
     ThunkGetPost
 } from "../../../Slices/PostSlice";
-import {getUser} from "../../../Slices/userSlice";
 import {getDownloadURL, getStorage, ref, uploadBytesResumable} from "firebase/storage";
 import {CircularProgress, Snackbar} from "@mui/material";
 import MuiAlert from '@mui/material/Alert';
@@ -17,12 +16,11 @@ import Button from '@mui/material/Button';
 import {styled} from "@mui/material/styles";
 
 
-const AddPost = ({dispatch}) => {
+const AddPost = ({dispatch, user}) => {
     let reff = useRef()
     let [image, setImg] = useState(null);
     const isProgress = useSelector(state => getProgress(state))
     const isSuccess = useSelector(state => getSuccessPost(state))
-    const user = useSelector(state => getUser(state))
     const [open, setOpen] = useState(isSuccess);
 
     const handleChange = (e) => {

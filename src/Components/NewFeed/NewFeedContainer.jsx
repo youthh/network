@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import AddPost from "./Post/AddPost";
 import PostContainer from "./Post/PostContainer";
 import './NewFeed.st.css'
@@ -7,55 +7,69 @@ import Box from "@mui/material/Box";
 import TabList from "@mui/lab/TabList";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@mui/lab/TabPanel";
-import PeopleContainer from "../People/PeopleCont/PeopleContainer";
 import {useDispatch, useSelector} from "react-redux";
-import {setLikeAC, ThunkSetLike} from "../../Slices/PostSlice";
+import {setLikeAC, ThunkSetLike, ThunkGetPost, setPostNull} from "../../Slices/PostSlice";
+import {getAccountUser, getFollowingUser, getUser} from "../../Slices/userSlice";
 
 const NewFeedContainer = () => {
     const posts = useSelector(state => state.PostSlice.newPost)
-    let isFetching = useSelector((state => state.PostSlice.isFetching))
     const dispatch = useDispatch();
+    let [postValue, setPostValue] = useState('all');
+    let isFetching = useSelector((state => state.PostSlice.isFetching))
+    let user = useSelector(state => getUser(state));
 
-    const [value, setValue] = React.useState('1');
+
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-        setValue(newValue);
+        setPostValue(newValue);
     };
 
+    const setLike = (id, nameOfUserPost, nameUser, likes) => {
 
-
-    const setLikeThunk = (data, liked) => {
-        dispatch(ThunkSetLike({data, liked})).then(() => {
-            dispatch(setLikeAC({data, liked}))
+        dispatch(ThunkSetLike({id, nameOfUserPost, nameUser, likes})).then(() => {
+            dispatch(setLikeAC({id, nameUser, nameOfUserPost}))
         });
     }
 
+    useEffect(() => {
+        
+        dispatch(getAccountUser(user.name)).then((data) => {
+            dispatch(ThunkGetPost({followingUser: data.payload[0].data().following, postValue}))
+        })
+
+        return () => {
+            dispatch(setPostNull())
+        }
+
+    }, [dispatch, postValue])
+
+
     return (
         <div className="newFeedContainer">
-            <AddPost dispatch={dispatch}/>
-            <TabContext value={value}>
+            <AddPost 
+                dispatch={dispatch}
+                user={user}
+            />
+            <TabContext value={postValue}>
                 <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                     <TabList onChange={handleChange} aria-label="lab API tabs example" centered>
-                        <Tab label="All Post" value="1"/>
-                        <Tab label="Following" value="2"/>
+                        <Tab label="All Post" value="all"/>
+                        <Tab label="Following" value="following"/>
                     </TabList>
                 </Box>
-                <TabPanel value="1">
+                <TabPanel value="all">
                     <PostContainer
-                        setLikeThunk={setLikeThunk}
+                        setLike={setLike}
                         isFetching={isFetching}
                         posts={posts}
-                        postValue={"all"}
-                        dispatch={dispatch}
-
+                        user={user}
                     />
                 </TabPanel>
-                <TabPanel value="2">
+                <TabPanel value="following">
                     <PostContainer
-                        setLikeThunk={setLikeThunk}
-                        dispatch={dispatch}
+                        setLike={setLike}
                         isFetching={isFetching}
                         posts={posts}
-                        postValue={"following"}
+                        user={user}
                     />
                 </TabPanel>
             </TabContext>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -8,82 +8,89 @@ import PeopleContainer from "./PeopleContainer";
 import '../PeopleStyleGlobal.css'
 import {useDispatch, useSelector} from "react-redux";
 import {
-    getAccountUser, getFetch, getFollowers,
-    getFollowing,
-    setFollow, setFollowerNull, setFollowValue, setPeopleNull, setPostProfileNull,
-    setUsersNull,
+    getAccountUser, 
+    getFollowing, setFetching,
+   setPeopleNull, 
     ThunkGetPeople,
     thunkGetUserFollowersName,
-    thunkSetFollow, thunkSetFollower
+
 } from "../../../Slices/userSlice";
-import PeopleItemCard from "./PeopleItemCard";
-import {NavLink} from "react-router-dom";
-import {BsHouseDoor} from "react-icons/bs";
 
-const PeopleTabs = ({value, handleChange, user, follow, dispatch}) => {
-    let followers = useSelector(state => getFollowers(state))
-    let following = useSelector(state => state.userSlice.user.following)
+import {CircularProgress} from "@mui/material";
+
+const PeopleTabs = ({value, handleChange, user, dispatch}) => {
+
     let isFetching = useSelector(state => state.userSlice.isFetching);
-
+    
     useEffect(() => {
-        dispatch(ThunkGetPeople())
+    
+        Promise.all([
+            dispatch(ThunkGetPeople()),
+            dispatch(getAccountUser(user.name))
+        ]).then((data) => {
+            if(data[1].payload.length === 0){
+                dispatch(setFetching())
+            }
+            dispatch(thunkGetUserFollowersName(data[1].payload[0].data().followers))
+            dispatch(getFollowing(data[1].payload[0].data().following))
 
-        dispatch(getAccountUser(user.name))
-            .then((data) => {
-
-                dispatch(thunkGetUserFollowersName(data.payload[0].data().followers))
-                dispatch(getFollowing(data.payload[0].data().following))
-            })
-
+        })
         return () => {
-            dispatch(setPostProfileNull())
-            dispatch(setUsersNull())
             dispatch(setPeopleNull())
         }
-    }, [dispatch, user.name])
+    }, [dispatch, user.name, value])
 
     return (
         <div>
             <TabContext value={value}>
                 <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                     <TabList onChange={handleChange} aria-label="lab API tabs example" centered>
-                        <Tab label="All people" value="1"/>
-                        <Tab label="Followers" value="2"/>
-                        <Tab label="Following" value="3"/>
+                        <Tab label="All people" value="people"/>
+                        <Tab label="Followers" value="followers"/>
+                        <Tab label="Following" value="following"/>
                     </TabList>
                 </Box>
-                <TabPanel value="1">
-                    <PeopleContainer user={user}
-                                     categoryTab={'people'}
-                                     follow={follow}
-                                     isFetching={isFetching}
-                                     dispatch={dispatch}
-                    />
-                </TabPanel>
-                <TabPanel value="2">
-                    {followers.length > 0 ?
-                        <PeopleContainer
-                            user={user}
-                            categoryTab={'followers'}
-                            follow={follow}
-                            dispatch={dispatch}
-                            isFetching={isFetching}
-                        />
+                {
+                    isFetching ? <CircularProgress/>
                         :
-                        <p>No followers yet</p>}
-                </TabPanel>
-                <TabPanel value="3">
-                    {following.length > 0 ?
-                        <PeopleContainer
-                            user={user}
-                            categoryTab={'following'}
-                            follow={follow}
-                            dispatch={dispatch}
-                            isFetching={isFetching}
-                        />
-                        :
-                        <p>No following yet</p>}
-                </TabPanel>
+                        <div>
+                            <TabPanel value="people">
+                                {
+                                    <PeopleContainer user={user}
+                                                     categoryTab={value}
+                                                     isFetching={isFetching}
+                                                     dispatch={dispatch}
+                                    />
+                                }
+                            </TabPanel>
+                            <TabPanel value="followers">
+                                {
+                                    user.followers.length > 0 ?
+                                        <PeopleContainer
+                                            user={user}
+                                            categoryTab={value}
+                                            dispatch={dispatch}
+                                            isFetching={isFetching}
+                                        />
+                                        :
+                                        <p>No followers yet</p>
+                                }
+                            </TabPanel>
+                            <TabPanel value="following">
+                                {
+                                    user.following.length > 0 ?
+                                        <PeopleContainer
+                                            user={user}
+                                            categoryTab={value}
+                                            dispatch={dispatch}
+                                            isFetching={isFetching}
+                                        />
+                                        :
+                                        <p>No following yet</p>
+                                }
+                            </TabPanel>
+                        </div>
+                }
             </TabContext>
 
 
